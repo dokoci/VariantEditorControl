@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NFEval_CS_SDK">
+      <HintPath>..\..\..\..\..\..\NFEvalSDK\bin\NFEval_CS_SDK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,9 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Variant.cs" />
-    <Compile Include="VariantEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="VariantEditorControl.cs" />
     <Compile Include="VariantEditorControl.Designer.cs">
       <DependentUpon>VariantEditorControl.cs</DependentUpon>
     </Compile>
@@ -57,12 +58,6 @@
       <DependentUpon>VariantEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="ITranslate\ITranslation.csproj">
-      <Project>{a2725af4-cc8e-48ed-ad48-4cb651abc88b}</Project>
-      <Name>ITranslation</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
