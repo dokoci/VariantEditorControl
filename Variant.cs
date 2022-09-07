@@ -23,7 +23,7 @@ namespace DataTypes
 {
     using System;
     using System.Collections.Generic;
-
+    using de.nanofocus.NFEval;
     public class FilePath
     {
         public string path;
@@ -33,10 +33,10 @@ namespace DataTypes
 
     public class Variant
     {
-        public enum VariantDataType
-        {
-            INTEGER = 0, DOUBLE = 1, STRING = 2, BOOL = 3, STRINGLIST = 5, INTLIST = 6, DOUBLELIST = 7, FILEPATH = 8, UNDEFINED = 9
-        }
+        //public enum VariantDataType
+        //{
+        //    INTEGER = 0, DOUBLE = 1, STRING = 2, BOOL = 3, STRINGLIST = 5, INTLIST = 6, DOUBLELIST = 7, FILEPATH = 8, UNDEFINED = 9
+        //}
         public Variant()
         {
             mData = 0;
@@ -46,14 +46,14 @@ namespace DataTypes
         }
         public Variant(int value, string unit)
         {
-            mDataType = VariantDataType.INTEGER;
+            mDataType = NFVariant.DataType.INT_TYPE;
 
             mData = value;
             mUnit = unit;
         }
         public Variant(double value, string unit)
         {
-            mDataType = VariantDataType.DOUBLE;
+            mDataType = NFVariant.DataType.DOUBLE_TYPE;
 
             mData = value;
             mUnit = unit;
@@ -61,7 +61,7 @@ namespace DataTypes
 
         public Variant(string value)
         {
-            mDataType = VariantDataType.STRING;
+            mDataType = NFVariant.DataType.STRING_TYPE;
 
             mData = value;
             mUnit = "";
@@ -69,27 +69,27 @@ namespace DataTypes
 
         public Variant(bool value)
         {
-            mDataType = VariantDataType.BOOL;
+            mDataType = NFVariant.DataType.BOOL_TYPE;
 
             mData = value;
             mUnit = "";
         }
         public Variant(List<string> value)
         {
-            mDataType = VariantDataType.STRINGLIST;
+            mDataType = NFVariant.DataType.STRING_VECTOR_TYPE;
 
             mData = value;
         }
 
         public Variant(List<int> value)
         {
-            mDataType = VariantDataType.INTLIST;
+            mDataType = NFVariant.DataType.INT_VECTOR_TYPE;
 
             mData = value;
         }
         public Variant(List<double> value)
         {
-            mDataType = VariantDataType.DOUBLELIST;
+            mDataType = NFVariant.DataType.DOUBLE_VECTOR_TYPE;
 
             mData = value;
         }
@@ -116,64 +116,64 @@ namespace DataTypes
 
         public List<string> getStringList()
         {
-            if (mDataType == VariantDataType.STRINGLIST) return (List<string>)mData;
+            if (mDataType == NFVariant.DataType.INT_TYPE) return (List<string>)mData;
             else return new List<string>() { Convert.ToString(mData) };
         }
 
         public List<int> getIntList()
         {
-            if (mDataType == VariantDataType.INTLIST) return (List<int>)mData;
+            if (mDataType == NFVariant.DataType.INT_VECTOR_TYPE) return (List<int>)mData;
             else return new List<int>() { Convert.ToInt32(mData) };
         }
         public List<double> getDoubleList()
         {
-            if (mDataType == VariantDataType.DOUBLELIST) return (List<double>)mData;
+            if (mDataType == NFVariant.DataType.DOUBLE_VECTOR_TYPE) return (List<double>)mData;
             else return new List<double>() { Convert.ToDouble(mData) };
         }
 
         public void setInt(int value)
         {
             mData = value;
-            mDataType = VariantDataType.INTEGER;
+            mDataType = NFVariant.DataType.INT_TYPE;
         }
         public void setDouble(double value)
         {
             mData = value;
-            mDataType = VariantDataType.DOUBLE;
+            mDataType = NFVariant.DataType.DOUBLE_TYPE;
         }
         public void setString(string value)
         {
             mData = value;
-            mDataType = VariantDataType.STRING;
+            mDataType = NFVariant.DataType.STRING_TYPE;
         }
         public void setBool(bool value)
         {
             mData = value;
-            mDataType = VariantDataType.BOOL;
+            mDataType = NFVariant.DataType.BOOL_TYPE;
         }
         public void setStringList(List<string> value)
         {
             mData = value;
-            mDataType = VariantDataType.STRINGLIST;
+            mDataType = NFVariant.DataType.STRING_VECTOR_TYPE;
         }
 
         public void setIntList(List<int> value)
         {
             mData = value;
-            mDataType = VariantDataType.INTLIST;
+            mDataType = NFVariant.DataType.INT_VECTOR_TYPE;
         }
 
         public void setDoubleList(List<double> value)
         {
             mData = value;
-            mDataType = VariantDataType.DOUBLELIST;
+            mDataType = NFVariant.DataType.DOUBLE_VECTOR_TYPE;
         }
 
 
-        public VariantDataType getDataType()
-        {
-            return mDataType;
-        }
+        //public VariantDataType getDataType()
+        //{
+        //    return mDataType;
+        //}
 
 
         public string getUnit()
@@ -183,7 +183,8 @@ namespace DataTypes
 
         #region Private   Fields
         private object mData;
-        private VariantDataType mDataType;
+        //private VariantDataType mDataType;
+        private NFVariant.DataType mDataType;
         private string mUnit;
         #endregion 
 
@@ -193,7 +194,7 @@ namespace DataTypes
 
     class VariantBindingProperties
     {
-        public VariantBindingProperties(Variant v)
+        public VariantBindingProperties(NFVariant v)
         {
             data = v;
         }
@@ -250,18 +251,37 @@ namespace DataTypes
         {
             set
             {
-                data.setStringList(value);
+                NFParameterNameListType list = new NFParameterNameListType();
+
+                foreach (var element in value)
+                {
+                    list.Add(element);
+                }
+
+                data.setStringVector(list);
             }
             get
             {
-                return data.getStringList();
+                List<string> list = new List<string>();
+                foreach (var element in data.getStdStringVector())
+                {
+                    list.Add(element);
+                }
+                return list;
             }
         }
         public List<int> asIntList
         {
             set
             {
-                data.setIntList(value);
+                //data.setIntList(value);
+                Vector2DList intList = new Vector2DList();
+                foreach (var item in value)
+                {
+                    intList.Add(item);
+                }
+                data.setVector2DList(intList);
+                //data.setInt(intList);
             }
             get
             {
@@ -279,6 +299,6 @@ namespace DataTypes
                 return data.getDoubleList();
             }
         }
-        private Variant data;
+        private NFVariant data;
     }
 }

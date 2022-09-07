@@ -21,21 +21,44 @@
 //SOFTWARE.
 
 using DataTypes;
-using ITranslation;
+//using ITranslation;
 using System.Collections.Generic;
 using System.Windows.Forms;
+
+using de.nanofocus.NFEval;
 
 namespace VariantEditorControl
 {
 
 
-    using VariantList = Dictionary<string, Variant>;
+    using VariantList = Dictionary<string, Variant>; // NFParameterSet
 
+    public interface ITranslate
+    {
+        string Text(string t);
+
+    };
+
+    public class Translate : ITranslate
+    {
+        public string Text(string t)
+        {
+            return t;
+        }
+    };
+
+    public class Translate2French : ITranslate
+    {
+        public string Text(string t)
+        {
+            return t;
+        }
+    };
     public partial class VariantEditorControl : UserControl
     {
         private ITranslate mTranslate;
         private int mNumberOfRows;
-
+        private NFParameterSetPointer p = NFParameterSet.New();
         public VariantEditorControl()
         {
             mNumberOfRows = 1;
@@ -53,18 +76,8 @@ namespace VariantEditorControl
 
             };
 
-
-
-
-
         }
-        public VariantEditorControl(ITranslate translate) : this()
-        {
-            mTranslate = translate;
 
-
-
-        }
 
         private void CheckAutoScroll(object s)
         {
@@ -107,7 +120,7 @@ namespace VariantEditorControl
             return height;
         }
 
-        public void SetDataList(VariantList data, VariantList dataMin, VariantList dataMax, VariantList dataDiscrete)
+        public void SetDataList(/*VariantList*/ NFParameterSetPointer data, NFParameterSetPointer dataMin, NFParameterSetPointer dataMax, NFParameterSetPointer dataDiscrete)
         {
 
             mainTable.Controls.Clear();
@@ -123,7 +136,7 @@ namespace VariantEditorControl
 
                 switch (element.Value.getDataType())
                 {
-                    case Variant.VariantDataType.INTEGER:
+                    case NFVariant.DataType.INT_TYPE: // NFVariant.Type
 
 
                         Label lIntegerName = new Label();
@@ -131,7 +144,7 @@ namespace VariantEditorControl
                         mainTable.Controls.Add(lIntegerName, 0, rowIndex);
 
 
-                        if (dataDiscrete.ContainsKey(element.Key))
+                        if (dataDiscrete.containsParameter(element.Key))
                         {
                             ComboBox cbxInteger = new ComboBox();
                             cbxInteger.Size = size;
@@ -148,8 +161,8 @@ namespace VariantEditorControl
                         {
                             NumericUpDown updwInteger = new NumericUpDown();
                             updwInteger.Size = size;
-                            updwInteger.Minimum = dataMin.ContainsKey(element.Key) ? (int)dataMin[element.Key].getInt() : 0;
-                            updwInteger.Maximum = dataMax.ContainsKey(element.Key) ? (int)dataMax[element.Key].getInt() : (int)element.Value.getInt() * 2; ;
+                            updwInteger.Minimum = dataMin.containsParameter(element.Key) ? (int)dataMin[element.Key].getInt() : 0;
+                            updwInteger.Maximum = dataMax.containsParameter(element.Key) ? (int)dataMax[element.Key].getInt() : (int)element.Value.getInt() * 2; ;
 
                             updwInteger.DataBindings.Add("Value", new VariantBindingProperties(element.Value), "asInteger");
                             mainTable.Controls.Add(updwInteger, 1, rowIndex);
@@ -169,7 +182,7 @@ namespace VariantEditorControl
                         break;
 
 
-                    case Variant.VariantDataType.DOUBLE:
+                    case NFVariant.DataType.DOUBLE_TYPE:
 
 
                         Label lDoubleName = new Label();
@@ -181,8 +194,8 @@ namespace VariantEditorControl
                         updwnDouble.Size = size;
                         updwnDouble.DecimalPlaces = 2;
                         updwnDouble.Increment = 0.1M;
-                        updwnDouble.Minimum = dataMin.ContainsKey(element.Key) ? (int)dataMin[element.Key].getDouble() : 0;
-                        updwnDouble.Maximum = dataMax.ContainsKey(element.Key) ? (int)dataMax[element.Key].getDouble() : (int)element.Value.getDouble() * 2; ;
+                        updwnDouble.Minimum = dataMin.containsParameter(element.Key) ? (int)dataMin[element.Key].getDouble() : 0;
+                        updwnDouble.Maximum = dataMax.containsParameter(element.Key) ? (int)dataMax[element.Key].getDouble() : (int)element.Value.getDouble() * 2; ;
 
 
                         updwnDouble.DataBindings.Add("Value", new VariantBindingProperties(element.Value), "asDouble");
@@ -200,14 +213,14 @@ namespace VariantEditorControl
 
 
 
-                    case Variant.VariantDataType.STRING:
+                    case NFVariant.DataType.STRING_TYPE:
 
 
                         Label lStringName = new Label();
                         lStringName.Text = mTranslate.Text(element.Key);
                         mainTable.Controls.Add(lStringName, 0, rowIndex);
 
-                        if (dataDiscrete.ContainsKey(element.Key))
+                        if (dataDiscrete.containsParameter(element.Key))
                         {
                             ComboBox cbxString = new ComboBox();
                             cbxString.Size = size;
@@ -243,7 +256,7 @@ namespace VariantEditorControl
                         break;
 
 
-                    case Variant.VariantDataType.BOOL:
+                    case NFVariant.DataType.BOOL_TYPE:
                         Label lBoolName = new Label();
                         lBoolName.Text = mTranslate.Text(element.Key);
                         mainTable.Controls.Add(lBoolName, 0, rowIndex);
@@ -264,7 +277,7 @@ namespace VariantEditorControl
 
                         break;
 
-                    case Variant.VariantDataType.STRINGLIST:
+                    case NFVariant.DataType.STRING_VECTOR_TYPE:
                         Label lStringListName = new Label();
                         lStringListName.Text = mTranslate.Text(element.Key);
                         mainTable.Controls.Add(lStringListName, 0, rowIndex);
@@ -321,3 +334,4 @@ namespace VariantEditorControl
         }
     }
 }
+
