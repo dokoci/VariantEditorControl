@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1972
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VariantEditorControl", "VariantEditorControl.csproj", "{FE334C5B-A7E1-4BBF-8F34-81F13C7545FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE334C5B-A7E1-4BBF-8F34-81F13C7545FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE334C5B-A7E1-4BBF-8F34-81F13C7545FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE334C5B-A7E1-4BBF-8F34-81F13C7545FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE334C5B-A7E1-4BBF-8F34-81F13C7545FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {613D9F40-E311-4D07-A417-7E7198C32C8D}
+	EndGlobalSection
+EndGlobal

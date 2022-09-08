@@ -31,32 +31,12 @@ namespace VariantEditorControl
 {
 
 
-    using VariantList = Dictionary<string, Variant>; // NFParameterSet
+    // using VariantList = Dictionary<string, Variant>; // NFParameterSet
 
-    public interface ITranslate
-    {
-        string Text(string t);
 
-    };
-
-    public class Translate : ITranslate
-    {
-        public string Text(string t)
-        {
-            return t;
-        }
-    };
-
-    public class Translate2French : ITranslate
-    {
-        public string Text(string t)
-        {
-            return t;
-        }
-    };
     public partial class VariantEditorControl : UserControl
     {
-        private ITranslate mTranslate;
+
         private int mNumberOfRows;
         private NFParameterSetPointer p = NFParameterSet.New();
         public VariantEditorControl()
@@ -131,27 +111,30 @@ namespace VariantEditorControl
 
             var size = new System.Drawing.Size(85, 20);
 
-            foreach (var element in data)
+            foreach (var parameterNAme in data.getParameterNames())
             {
+                NFVariant value = data.getParameter(parameterNAme);
+                NFVariant valueMin = dataMin.getParameter(parameterNAme);
+                NFVariant valueMax = dataMax.getParameter(parameterNAme);
 
-                switch (element.Value.getDataType())
+                switch (data.getParameter(parameterNAme).getType())
                 {
                     case NFVariant.DataType.INT_TYPE: // NFVariant.Type
 
 
                         Label lIntegerName = new Label();
-                        lIntegerName.Text = mTranslate.Text(element.Key);
+                        lIntegerName.Text = (parameterNAme);
                         mainTable.Controls.Add(lIntegerName, 0, rowIndex);
 
 
-                        if (dataDiscrete.containsParameter(element.Key))
+                        if (dataDiscrete.containsParameter(parameterNAme))
                         {
                             ComboBox cbxInteger = new ComboBox();
                             cbxInteger.Size = size;
-                            cbxInteger.DataSource = dataDiscrete[element.Key].getIntList();
+                            cbxInteger.DataSource = dataDiscrete.getParameter(parameterNAme).getIntVector();
                             cbxInteger.SelectedIndexChanged += (s, e) =>
                             {
-                                element.Value.setInt(System.Convert.ToInt32((s as ComboBox).SelectedItem));
+                                data.setParameter(parameterNAme, new NFVariant(System.Convert.ToInt32((s as ComboBox).SelectedItem)));
                             };
 
 
@@ -161,17 +144,17 @@ namespace VariantEditorControl
                         {
                             NumericUpDown updwInteger = new NumericUpDown();
                             updwInteger.Size = size;
-                            updwInteger.Minimum = dataMin.containsParameter(element.Key) ? (int)dataMin[element.Key].getInt() : 0;
-                            updwInteger.Maximum = dataMax.containsParameter(element.Key) ? (int)dataMax[element.Key].getInt() : (int)element.Value.getInt() * 2; ;
+                            updwInteger.Minimum = dataMin.containsParameter(parameterNAme) ? dataMin.getParameter(parameterNAme).getInt() : 0;
+                            updwInteger.Maximum = dataMax.containsParameter(parameterNAme) ? dataMax.getParameter(parameterNAme).getInt() : data.getParameter(parameterNAme).getInt() * 2; ;
 
-                            updwInteger.DataBindings.Add("Value", new VariantBindingProperties(element.Value), "asInteger");
+                            updwInteger.DataBindings.Add("Value", new VariantBindingProperties(data.getParameter(parameterNAme)), "asInteger");
                             mainTable.Controls.Add(updwInteger, 1, rowIndex);
 
 
 
                         }
                         Label lIntegerUnit = new Label();
-                        lIntegerUnit.Text = mTranslate.Text(element.Value.getUnit());
+                        lIntegerUnit.Text = (value.getUnit().ToString());
                         mainTable.Controls.Add(lIntegerUnit, 2, rowIndex);
 
 
@@ -186,7 +169,7 @@ namespace VariantEditorControl
 
 
                         Label lDoubleName = new Label();
-                        lDoubleName.Text = mTranslate.Text(element.Key);
+                        lDoubleName.Text = (parameterNAme);
                         mainTable.Controls.Add(lDoubleName, 0, rowIndex);
 
 
@@ -194,15 +177,15 @@ namespace VariantEditorControl
                         updwnDouble.Size = size;
                         updwnDouble.DecimalPlaces = 2;
                         updwnDouble.Increment = 0.1M;
-                        updwnDouble.Minimum = dataMin.containsParameter(element.Key) ? (int)dataMin[element.Key].getDouble() : 0;
-                        updwnDouble.Maximum = dataMax.containsParameter(element.Key) ? (int)dataMax[element.Key].getDouble() : (int)element.Value.getDouble() * 2; ;
+                        updwnDouble.Minimum = dataMin.containsParameter(parameterNAme) ? (int)valueMin.getDouble() : 0;
+                        updwnDouble.Maximum = dataMax.containsParameter(parameterNAme) ? (int)valueMax.getDouble() : (int)value.getDouble() * 2; ;
 
 
-                        updwnDouble.DataBindings.Add("Value", new VariantBindingProperties(element.Value), "asDouble");
+                        updwnDouble.DataBindings.Add("Value", new VariantBindingProperties(value), "asDouble");
                         mainTable.Controls.Add(updwnDouble, 1, rowIndex);
 
                         Label lDoubleUnit = new Label();
-                        lDoubleUnit.Text = mTranslate.Text(element.Value.getUnit());
+                        lDoubleUnit.Text = (value.getUnit().ToString());
 
 
                         mainTable.Controls.Add(lDoubleUnit, 2, rowIndex);
@@ -217,17 +200,17 @@ namespace VariantEditorControl
 
 
                         Label lStringName = new Label();
-                        lStringName.Text = mTranslate.Text(element.Key);
+                        lStringName.Text = (parameterNAme);
                         mainTable.Controls.Add(lStringName, 0, rowIndex);
 
-                        if (dataDiscrete.containsParameter(element.Key))
+                        if (dataDiscrete.containsParameter(parameterNAme))
                         {
                             ComboBox cbxString = new ComboBox();
                             cbxString.Size = size;
-                            cbxString.DataSource = dataDiscrete[element.Key].getStringList();
+                            cbxString.DataSource = dataDiscrete.getParameter(parameterNAme).getStdStringVector();
                             cbxString.SelectedIndexChanged += (s, e) =>
                             {
-                                element.Value.setString((string)(s as ComboBox).SelectedItem);
+                                value.setString((string)(s as ComboBox).SelectedItem);
                             };
 
 
@@ -237,7 +220,7 @@ namespace VariantEditorControl
                         {
                             TextBox txtString = new TextBox();
                             txtString.Size = size;
-                            txtString.DataBindings.Add("Text", new VariantBindingProperties(element.Value), "asString");
+                            txtString.DataBindings.Add("Text", new VariantBindingProperties(value), "asString");
 
                             mainTable.Controls.Add(txtString, 1, rowIndex);
                         }
@@ -246,7 +229,7 @@ namespace VariantEditorControl
 
 
                         Label lStringUnit = new Label();
-                        lStringUnit.Text = mTranslate.Text(element.Value.getUnit());
+                        lStringUnit.Text = (value.getUnit().ToString());
 
 
                         mainTable.Controls.Add(lStringUnit, 2, rowIndex);
@@ -258,17 +241,17 @@ namespace VariantEditorControl
 
                     case NFVariant.DataType.BOOL_TYPE:
                         Label lBoolName = new Label();
-                        lBoolName.Text = mTranslate.Text(element.Key);
+                        lBoolName.Text = (parameterNAme);
                         mainTable.Controls.Add(lBoolName, 0, rowIndex);
 
                         CheckBox cbxBool = new CheckBox();
                         cbxBool.Size = size;
-                        cbxBool.DataBindings.Add("Checked", new VariantBindingProperties(element.Value), "asBool");
+                        cbxBool.DataBindings.Add("Checked", new VariantBindingProperties(value), "asBool");
 
                         mainTable.Controls.Add(cbxBool, 1, rowIndex);
 
                         Label lBoolUnit = new Label();
-                        lBoolUnit.Text = mTranslate.Text(element.Value.getUnit());
+                        lBoolUnit.Text = (value.getUnit().ToString());
 
 
                         mainTable.Controls.Add(lBoolUnit, 2, rowIndex);
@@ -279,16 +262,16 @@ namespace VariantEditorControl
 
                     case NFVariant.DataType.STRING_VECTOR_TYPE:
                         Label lStringListName = new Label();
-                        lStringListName.Text = mTranslate.Text(element.Key);
+                        lStringListName.Text = (parameterNAme);
                         mainTable.Controls.Add(lStringListName, 0, rowIndex);
 
                         ComboBox cbxStringList = new ComboBox();
                         cbxStringList.Size = size;
-                        cbxStringList.DataSource = new VariantBindingProperties(element.Value).asStringList;
+                        cbxStringList.DataSource = new VariantBindingProperties(value).asStringList;
                         mainTable.Controls.Add(cbxStringList, 1, rowIndex);
 
                         Label lStringListUnit = new Label();
-                        lStringListUnit.Text = mTranslate.Text(element.Value.getUnit());
+                        lStringListUnit.Text = (value.getUnit().ToString());
                         mainTable.Controls.Add(lStringListUnit, 2, rowIndex);
 
                         ++rowIndex;
@@ -312,17 +295,17 @@ namespace VariantEditorControl
         {
             const int rowIndex = 0;
             Label l00 = new Label();
-            l00.Text = mTranslate.Text("Name");
+            l00.Text = ("Name");
 
             l00.Font = new System.Drawing.Font(Label.DefaultFont, System.Drawing.FontStyle.Bold);
 
             Label l10 = new Label();
-            l10.Text = mTranslate.Text("Value");
+            l10.Text = ("Value");
             l10.Font = new System.Drawing.Font(Label.DefaultFont, System.Drawing.FontStyle.Bold);
 
             Label l20 = new Label();
             l20.Anchor = AnchorStyles.Left;
-            l20.Text = mTranslate.Text("Unit");
+            l20.Text = ("Unit");
 
             l20.Font = new System.Drawing.Font(Label.DefaultFont, System.Drawing.FontStyle.Bold);
 
@@ -334,4 +317,3 @@ namespace VariantEditorControl
         }
     }
 }
-
