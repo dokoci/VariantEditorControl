@@ -31,7 +31,8 @@ namespace VariantEditorControl
 
     // using VariantList = Dictionary<string, Variant>; // NFParameterSet
 
-
+    //delegate OnParameterChange;
+    //event
     public partial class VariantEditorControl : UserControl
     {
         Dictionary<NFUnitCls.Unit, string> UnitToString = new Dictionary<NFUnitCls.Unit, string>() {
@@ -138,6 +139,7 @@ namespace VariantEditorControl
                 NFVariant value = data.getParameter(parameterName);
                 NFVariant valueMin = dataMin.getParameter(parameterName);
                 NFVariant valueMax = dataMax.getParameter(parameterName);
+                NFVariant valueDisc = dataDiscrete.getParameter(parameterName);
 
                 switch (data.getParameter(parameterName).getType())
                 {
@@ -153,7 +155,12 @@ namespace VariantEditorControl
                         {
                             ComboBox cbxInteger = new ComboBox();
                             cbxInteger.Size = size;
-                            cbxInteger.DataSource = dataDiscrete.getParameter(parameterName).getIntVector();
+
+                            uint count = valueDisc.getNumberOfElements();
+                            long[] intList = new long[count];
+                            valueDisc.getIntVector(intList, count);
+                            List<long> list = new List<long>(intList);
+                            cbxInteger.DataSource = list;
                             cbxInteger.SelectedIndexChanged += (s, e) =>
                             {
                                 data.setParameter(parameterName, new NFVariant(System.Convert.ToInt32((s as ComboBox).SelectedItem)));
@@ -167,10 +174,17 @@ namespace VariantEditorControl
                             NumericUpDown updwInteger = new NumericUpDown();
                             updwInteger.Size = size;
                             updwInteger.Minimum = dataMin.containsParameter(parameterName) ? dataMin.getParameter(parameterName).getInt() : 0;
-                            updwInteger.Maximum = dataMax.containsParameter(parameterName) ? dataMax.getParameter(parameterName).getInt() : data.getParameter(parameterName).getInt() * 2; ;
+                            updwInteger.Maximum = 99999;/*dataMax.containsParameter(parameterName) ? dataMax.getParameter(parameterName).getInt() : data.getParameter(parameterName).getInt() * 2; ;*/
 
                             updwInteger.DataBindings.Add("Value", new VariantBindingProperties(data.getParameter(parameterName)), "asInteger");
                             mainTable.Controls.Add(updwInteger, 1, rowIndex);
+
+                            updwInteger.ValueChanged += (s, e) =>
+                            {
+                                System.Console.WriteLine(" Parameter " + parameterName + " " + s.ToString() + e.ToString());
+                                //OnParameterChange(parameterName);
+
+                            };
 
 
 
@@ -204,7 +218,7 @@ namespace VariantEditorControl
                         updwnDouble.DecimalPlaces = 2;
                         updwnDouble.Increment = 0.1M;
                         updwnDouble.Minimum = dataMin.containsParameter(parameterName) ? (int)valueMin.getDouble() : 0;
-                        updwnDouble.Maximum = dataMax.containsParameter(parameterName) ? (int)valueMax.getDouble() : (int)value.getDouble() * 2; ;
+                        //updwnDouble.Maximum = dataMax.containsParameter(parameterName) ? (int)valueMax.getDouble() : (int)value.getDouble() * 2; ;
 
 
                         updwnDouble.DataBindings.Add("Value", new VariantBindingProperties(value), "asDouble");

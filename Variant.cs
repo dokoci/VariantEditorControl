@@ -132,7 +132,6 @@ namespace DataTypes
                 uint count = data.getNumberOfElements();
                 long[] intList = new long[count];
                 data.getIntVector(intList, count);
-                List<int> list = new List<int>();
 
                 return new List<long>(intList);
             }
