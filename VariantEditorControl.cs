@@ -39,7 +39,7 @@ namespace VariantEditorControl
             { NFUnitCls.Unit.NFUnitNone, "" },
             { NFUnitCls.Unit.NFUnitInch, "Inch" },
             { NFUnitCls.Unit.NFUnitM, "Meter" },
-            { NFUnitCls.Unit.NFUnitA, "Amper" },
+            { NFUnitCls.Unit.NFUnitA, "Ampere" },
             { NFUnitCls.Unit.NFUnitV, "Volt" },
             { NFUnitCls.Unit.NFUnitN, "Newton" },
             { NFUnitCls.Unit.NFUnitDeg, "Degree" },
@@ -174,7 +174,7 @@ namespace VariantEditorControl
                             NumericUpDown updwInteger = new NumericUpDown();
                             updwInteger.Size = size;
                             updwInteger.Minimum = dataMin.containsParameter(parameterName) ? dataMin.getParameter(parameterName).getInt() : 0;
-                            updwInteger.Maximum = 99999;/*dataMax.containsParameter(parameterName) ? dataMax.getParameter(parameterName).getInt() : data.getParameter(parameterName).getInt() * 2; ;*/
+                            updwInteger.Maximum = 99;/*dataMax.containsParameter(parameterName) ? dataMax.getParameter(parameterName).getInt() : data.getParameter(parameterName).getInt() * 2; */
 
                             updwInteger.DataBindings.Add("Value", new VariantBindingProperties(data.getParameter(parameterName)), "asInteger");
                             mainTable.Controls.Add(updwInteger, 1, rowIndex);
