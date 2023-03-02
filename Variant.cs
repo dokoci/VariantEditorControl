@@ -39,50 +39,26 @@ namespace DataTypes
 
         public int asInteger
         {
-            set
-            {
-                data.setInt(value);
-            }
-            get
-            {
-                return data.getInt();
-            }
+            set => data.setInt(value);
+            get => data.getInt();
         }
 
         public double asDouble
         {
-            set
-            {
-                data.setDouble(value);
-            }
-            get
-            {
-                return data.getDouble();
-            }
+            set => data.setDouble(value);
+            get => data.getDouble();
         }
 
         public string asString
         {
-            set
-            {
-                data.setString(value);
-            }
-            get
-            {
-                return data.getString();
-            }
+            set => data.setString(value);
+            get => data.getString();
         }
 
         public bool asBool
         {
-            set
-            {
-                data.setBool(value);
-            }
-            get
-            {
-                return data.getBool();
-            }
+            set => data.setBool(value);
+            get => data.getBool();
         }
 
         public List<string> asStringList
