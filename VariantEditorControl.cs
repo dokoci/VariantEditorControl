@@ -68,7 +68,7 @@ namespace VariantEditorControl
         private NFParameterSetPointer p = NFParameterSet.New();
         public VariantEditorControl()
         {
-            mNumberOfRows = 1;
+            mNumberOfRows = 4;
             InitializeComponent();
 
             Load += (s, e) =>
@@ -148,13 +148,11 @@ namespace VariantEditorControl
                 {
                     case NFVariant.DataType.INT_TYPE: // NFVariant.Type
 
-
                         Label lIntegerName = new Label
                         {
                             Text = parameterName
                         };
                         mainTable.Controls.Add(lIntegerName, 0, rowIndex);
-
 
                         if (dataDiscrete.containsParameter(parameterName))
                         {
@@ -168,12 +166,12 @@ namespace VariantEditorControl
                             valueDisc.getIntVector(intList, count);
                             List<long> list = new List<long>(intList);
                             cbxInteger.DataSource = list;
+
                             cbxInteger.SelectedIndexChanged += (s, e) =>
                             {
                                 data.setParameter(parameterName, new NFVariant(Convert.ToInt32((s as ComboBox).SelectedItem)));
                                 IntListener?.Invoke();
                             };
-
 
                             mainTable.Controls.Add(cbxInteger, 1, rowIndex);
                         }
@@ -183,7 +181,7 @@ namespace VariantEditorControl
                             {
                                 Size = size,
                                 Minimum = dataMin.containsParameter(parameterName) ? dataMin.getParameter(parameterName).getInt() : 0,
-                                Maximum = 99/*dataMax.containsParameter(parameterName) ? dataMax.getParameter(parameterName).getInt() : data.getParameter(parameterName).getInt() * 2; */
+                                Maximum = 20/*dataMax.containsParameter(parameterName) ? dataMax.getParameter(parameterName).getInt() : data.getParameter(parameterName).getInt() * 2; */
                             };
 
                             updwInteger.DataBindings.Add("Value", new VariantBindingProperties(data.getParameter(parameterName)), "asInteger");
@@ -197,8 +195,6 @@ namespace VariantEditorControl
                                 IntListener?.Invoke();
                             };
 
-
-
                         }
                         Label lIntegerUnit = new Label
                         {
@@ -209,9 +205,7 @@ namespace VariantEditorControl
                         };
 
                         mainTable.Controls.Add(lIntegerUnit, 2, rowIndex);
-
-
-
+                        
                         ++rowIndex;
 
 
@@ -223,7 +217,7 @@ namespace VariantEditorControl
 
                         Label lDoubleName = new Label
                         {
-                            Text = (parameterName)
+                            Text = parameterName
                         };
                         mainTable.Controls.Add(lDoubleName, 0, rowIndex);
 
@@ -260,7 +254,7 @@ namespace VariantEditorControl
 
                         Label lStringName = new Label
                         {
-                            Text = (parameterName)
+                            Text = parameterName
                         };
                         mainTable.Controls.Add(lStringName, 0, rowIndex);
 
@@ -380,21 +374,23 @@ namespace VariantEditorControl
 
             Label l10 = new Label
             {
-                Text = ("Value"),
+                Text = "Value",
                 Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
             };
 
             Label l20 = new Label
             {
                 Anchor = AnchorStyles.Left,
-                Text = ("Unit"),
+                Text = "Unit",
 
                 Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
             };
 
+            Label lTest = new Label { Text = "test" };
             mainTable.Controls.Add(l00, 0, rowIndex);
             mainTable.Controls.Add(l10, 1, rowIndex);
             mainTable.Controls.Add(l20, 2, rowIndex);
+            mainTable.Controls.Add(lTest, 3, rowIndex);
             mainTable.RowStyles[rowIndex].SizeType = SizeType.AutoSize;
             return;
         }

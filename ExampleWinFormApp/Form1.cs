@@ -58,9 +58,13 @@ namespace ExampleWinFormApp
             comboBox1.DisplayMember = "Key";
             comboBox1.ValueMember = "Value";
 
+            Random rand = new Random();
+            int x = rand.Next(0, 20);
+            int y = rand.Next(0, 20);
 
-            data.setParameter("X", new NFVariant(19, NFUnitCls.Unit.NFUnitCustom));
-            data.setParameter("Y", new NFVariant(16, NFUnitCls.Unit.NFUnitCustom));
+            data.setParameter("X", new NFVariant(x, NFUnitCls.Unit.NFUnitM));
+            data.setParameter("Y", new NFVariant(y, NFUnitCls.Unit.NFUnitM));
+
             panel1.Controls.Add(vc);
             vc.SetDataList(data, dataMin, dataMax, dataDiscrete);
             RefreshChart();
@@ -87,7 +91,7 @@ namespace ExampleWinFormApp
             series.ChartType = SeriesChartType.Spline;
             chart1.Series["Dictionary X , Y Values"].MarkerStyle = MarkerStyle.Circle;
             chart1.Series["Dictionary X , Y Values"].MarkerSize = 12;
-            chart1.Series["Dictionary X , Y Values"].Color = Color.Green;
+            chart1.Series["Dictionary X , Y Values"].Color = Color.Red;
             series.Points.DataBindXY(MyList.Keys, MyList.Values);
             series.Points.AddXY(data.getParameter("X").getInt(), data.getParameter("Y").getInt());
         }

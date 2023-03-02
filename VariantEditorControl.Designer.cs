@@ -45,12 +45,17 @@
             // 
             // mainTable
             // 
+            this.mainTable.AutoSize = true;
             this.mainTable.BackColor = System.Drawing.SystemColors.Control;
-            this.mainTable.ColumnCount = 3;
-            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.mainTable.ColumnCount = 6;
+            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.mainTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainTable.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
             this.mainTable.Location = new System.Drawing.Point(0, 0);
             this.mainTable.Name = "mainTable";
             this.mainTable.RowCount = 8;
@@ -76,6 +81,7 @@
             this.Name = "VariantEditorControl";
             this.Size = new System.Drawing.Size(383, 623);
             this.mainPanel.ResumeLayout(false);
+            this.mainPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
