@@ -32,8 +32,6 @@ namespace VariantEditorControl
     public delegate void Notify();
     // using VariantList = Dictionary<string, Variant>; // NFParameterSet
 
-    //delegate OnParameterChange;
-    //event
     public partial class VariantEditorControl : UserControl
     {
         //public event EventHandler IntListener; // testing..
@@ -66,9 +64,43 @@ namespace VariantEditorControl
 
         private int mNumberOfRows;
         private NFParameterSetPointer p = NFParameterSet.New();
+
+
+        private NFParameterSetPointer parameterSet;
+        private NFParameterSetReaderPointer reader = NFParameterSetReader.New();
+        private NFParameterSetWriterPointer writer = NFParameterSetWriter.New();
+
+        public void LoadData()
+        {
+            reader.setSource("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
+            bool success = reader.read();
+            if (success)
+            {
+                parameterSet = reader.getParameterSet();
+                ComboBox cb = new ComboBox();
+                
+                foreach (var dat in parameterSet.getParameterNames())
+                {
+                    NFVariant result = parameterSet.getParameter(dat);
+                    if (result.getType() == NFVariant.DataType.INT_TYPE)
+                    {
+                        Console.WriteLine(result);
+                    }
+                    if (parameterSet.containsParameter(dat))
+                    {
+                    }
+                }
+                    mainTable.Controls.Add(cb, 1, 1);
+            }
+        }
+
+        public void SaveData()
+        {
+
+        }
         public VariantEditorControl()
         {
-            mNumberOfRows = 4;
+            mNumberOfRows = 1;
             InitializeComponent();
 
             Load += (s, e) =>
@@ -96,7 +128,7 @@ namespace VariantEditorControl
             }
             else
             {
-                this.AutoScroll = false;
+                AutoScroll = false;
             }
         }
 
@@ -387,6 +419,7 @@ namespace VariantEditorControl
             };
 
             Label lTest = new Label { Text = "test" };
+
             mainTable.Controls.Add(l00, 0, rowIndex);
             mainTable.Controls.Add(l10, 1, rowIndex);
             mainTable.Controls.Add(l20, 2, rowIndex);

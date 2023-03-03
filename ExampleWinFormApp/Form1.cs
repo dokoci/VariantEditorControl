@@ -11,6 +11,7 @@ namespace ExampleWinFormApp
     {
         
         VariantEditorControl.VariantEditorControl vc = new VariantEditorControl.VariantEditorControl();
+        VariantEditorControl.VariantEditorControl vc1 = new VariantEditorControl.VariantEditorControl();
         NFParameterSetPointer data = NFParameterSet.New();
         NFParameterSetPointer dataMin = NFParameterSet.New();
         NFParameterSetPointer dataMax = NFParameterSet.New();
@@ -56,7 +57,7 @@ namespace ExampleWinFormApp
             ComboList[5] = "Five";
             comboBox1.DataSource = new BindingSource(ComboList, null);
             comboBox1.DisplayMember = "Key";
-            comboBox1.ValueMember = "Value";
+            //comboBox1.ValueMember = "Value";
 
             Random rand = new Random();
             int x = rand.Next(0, 20);
@@ -65,9 +66,14 @@ namespace ExampleWinFormApp
             data.setParameter("X", new NFVariant(x, NFUnitCls.Unit.NFUnitM));
             data.setParameter("Y", new NFVariant(y, NFUnitCls.Unit.NFUnitM));
 
+            dataDiscrete.setParameter("test", new NFVariant(ComboList.Keys.ToString(), NFUnitCls.Unit.NFUnitA));
             panel1.Controls.Add(vc);
+            panel2.Controls.Add(vc1);
             vc.SetDataList(data, dataMin, dataMax, dataDiscrete);
+            
+            vc1.LoadData();
             RefreshChart();
+            dataGridView1.DataSource = data;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
