@@ -35,12 +35,13 @@
             // 
             // mainPanel
             // 
+            this.mainPanel.AutoSize = true;
             this.mainPanel.BackColor = System.Drawing.SystemColors.Control;
             this.mainPanel.Controls.Add(this.mainTable);
             this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPanel.Location = new System.Drawing.Point(0, 0);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(383, 623);
+            this.mainPanel.Size = new System.Drawing.Size(0, 0);
             this.mainPanel.TabIndex = 0;
             // 
             // mainTable
@@ -55,7 +56,7 @@
             this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.mainTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainTable.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+            this.mainTable.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
             this.mainTable.Location = new System.Drawing.Point(0, 0);
             this.mainTable.Name = "mainTable";
             this.mainTable.RowCount = 8;
@@ -67,7 +68,7 @@
             this.mainTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.mainTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.mainTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.mainTable.Size = new System.Drawing.Size(383, 623);
+            this.mainTable.Size = new System.Drawing.Size(0, 0);
             this.mainTable.TabIndex = 0;
             // 
             // VariantEditorControl
@@ -75,14 +76,17 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(this.mainPanel);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "VariantEditorControl";
-            this.Size = new System.Drawing.Size(383, 623);
+            this.Size = new System.Drawing.Size(0, 0);
             this.mainPanel.ResumeLayout(false);
             this.mainPanel.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

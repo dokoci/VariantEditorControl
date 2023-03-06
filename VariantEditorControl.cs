@@ -25,6 +25,8 @@ using de.nanofocus.NFEval;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Linq;
+using System.Data;
 
 namespace VariantEditorControl
 {
@@ -70,28 +72,109 @@ namespace VariantEditorControl
         private NFParameterSetReaderPointer reader = NFParameterSetReader.New();
         private NFParameterSetWriterPointer writer = NFParameterSetWriter.New();
 
-        public void LoadData()
+        public void LoadData(NFParameterSetPointer selectedParam)
         {
+            mainTable.Controls.Clear();
+
+
+            System.Drawing.Size size = new System.Drawing.Size(150, 20);
+
             reader.setSource("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
             bool success = reader.read();
+            
             if (success)
             {
                 parameterSet = reader.getParameterSet();
-                ComboBox cb = new ComboBox();
-                
-                foreach (var dat in parameterSet.getParameterNames())
+                ComboBox cb = new ComboBox()
                 {
-                    NFVariant result = parameterSet.getParameter(dat);
-                    if (result.getType() == NFVariant.DataType.INT_TYPE)
+                    Size = size
+                };
+                
+                List<string> ls = new List<string>(parameterSet.getParameterNames());
+                cb.DataSource = ls;
+                //Console.WriteLine(parameterSet.getParameter("MPD_CONTROL_TIMEOUT").getInt());
+                mainTable.Controls.Add(cb, 1, 1);
+
+                Label type = new Label();
+                Label unit = new Label();
+                Label UnitMultiplicator = new Label();
+                Label UnitExponent = new Label();
+                Label ValueLabel = new Label();
+                NumericUpDown NumVal = new NumericUpDown();
+                
+                cb.SelectedIndexChanged += (s, e) =>
                     {
-                        Console.WriteLine(result);
-                    }
-                    if (parameterSet.containsParameter(dat))
-                    {
-                    }
-                }
-                    mainTable.Controls.Add(cb, 1, 1);
+                        string str = (string)(s as ComboBox).SelectedItem;
+
+                        NFVariant val = parameterSet.getParameter(str);
+                        type.Text = val.getUnitType().ToString();
+                        unit.Text = val.getUnit().ToString();
+                        UnitMultiplicator.Text = val.getUnitMultiplicator().ToString();
+                        UnitExponent.Text = val.getUnitExponent().ToString();
+                        ValueLabel.Text = val.getValue().ToString();
+                        // todo:
+                        // Check if is integer or double
+                        // refresh on value change
+                        // get the right unit and type
+                        NumVal.DataBindings.Add("Value", new VariantBindingProperties(parameterSet.getParameter(str)), "asInteger");
+                        //Console.WriteLine(parameterSet.getParameter(str).getUnit());
+                        IntListener?.Invoke();
+                    };
+                mainTable.Controls.Add(type,1,6);
+                mainTable.Controls.Add(unit,3,6);
+                mainTable.Controls.Add(UnitMultiplicator,4, 6);
+                mainTable.Controls.Add(UnitExponent, 5, 6);
+                //mainTable.Controls.Add(ValueLabel, 6, 6);
+                mainTable.Controls.Add(NumVal, 6, 6);
+                Label LType = new Label()
+                {
+                    Size = size,
+                    Text = "Type",
+                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                };
+                Label LUnit = new Label()
+                {
+                    Size = size,
+                    Text = "Unit",
+                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                };
+                Label LUnitMultiplicator = new Label()
+                {
+                    Size = size,
+                    Text = "UnitMultiplicator",
+                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                };
+                Label LUnitExponent = new Label()
+                {
+                    Size = size,
+                    Text = "UnitExponent",
+                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                };
+
+                Label LValue = new Label()
+                {
+                    Size = size,
+                    Text = "Value",
+                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                };
+                mainTable.Controls.Add(LValue, 6, 5);
+                mainTable.Controls.Add(LUnitExponent, 5, 5);
+                mainTable.Controls.Add(LUnitMultiplicator, 4, 5);
+                mainTable.Controls.Add(LUnit, 3, 5);
+                mainTable.Controls.Add(LType, 1, 5);
+
+                //DataSet ds = new DataSet();
+                //ds.ReadXml("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
+                //DataGridView dgView = new DataGridView()
+                //{
+                //    Size = size,
+                //    //DataSource = new BindingSource(ls, null)
+                //    //DataSource = ds.Tables[1]
+                //    //DataSource = ls
+                //};
+                //mainTable.Controls.Add(dgView, 1, 1);
             }
+            return;
         }
 
         public void SaveData()
@@ -223,6 +306,7 @@ namespace VariantEditorControl
                             {
                                 //System.Console.WriteLine(" Parameter " + parameterName + " " + s.ToString() + e.ToString());
                                 //OnParameterChange(parameterName);
+
                                 data.setParameter(parameterName, new NFVariant(Convert.ToInt32(updwInteger.Value)));
                                 IntListener?.Invoke();
                             };

@@ -12,6 +12,9 @@ namespace ExampleWinFormApp
         
         VariantEditorControl.VariantEditorControl vc = new VariantEditorControl.VariantEditorControl();
         VariantEditorControl.VariantEditorControl vc1 = new VariantEditorControl.VariantEditorControl();
+
+        NFParameterSetPointer param = NFParameterSet.New();
+
         NFParameterSetPointer data = NFParameterSet.New();
         NFParameterSetPointer dataMin = NFParameterSet.New();
         NFParameterSetPointer dataMax = NFParameterSet.New();
@@ -71,9 +74,9 @@ namespace ExampleWinFormApp
             panel2.Controls.Add(vc1);
             vc.SetDataList(data, dataMin, dataMax, dataDiscrete);
             
-            vc1.LoadData();
+            vc1.LoadData(param);
             RefreshChart();
-            dataGridView1.DataSource = data;
+            //dataGridView1.DataSource = param;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -100,6 +103,8 @@ namespace ExampleWinFormApp
             chart1.Series["Dictionary X , Y Values"].Color = Color.Red;
             series.Points.DataBindXY(MyList.Keys, MyList.Values);
             series.Points.AddXY(data.getParameter("X").getInt(), data.getParameter("Y").getInt());
+            
+            Console.WriteLine(param.getParameter("test").getValue());
         }
 
        
