@@ -49,6 +49,11 @@ namespace DataTypes
             get => data.getDouble();
         }
 
+        public float asFloat
+        {
+            set => data.setFloat(value);
+            get => data.getFloat();
+        }
         public string asString
         {
             set => data.setString(value);

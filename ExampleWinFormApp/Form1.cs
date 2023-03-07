@@ -13,7 +13,7 @@ namespace ExampleWinFormApp
         VariantEditorControl.VariantEditorControl vc = new VariantEditorControl.VariantEditorControl();
         VariantEditorControl.VariantEditorControl vc1 = new VariantEditorControl.VariantEditorControl();
 
-        NFParameterSetPointer param = NFParameterSet.New();
+        NFParameterSetReaderPointer param = NFParameterSetReader.New();
 
         NFParameterSetPointer data = NFParameterSet.New();
         NFParameterSetPointer dataMin = NFParameterSet.New();
@@ -104,7 +104,7 @@ namespace ExampleWinFormApp
             series.Points.DataBindXY(MyList.Keys, MyList.Values);
             series.Points.AddXY(data.getParameter("X").getInt(), data.getParameter("Y").getInt());
             
-            Console.WriteLine(param.getParameter("test").getValue());
+            //Console.WriteLine(param.getParameter("test").getValue());
         }
 
        

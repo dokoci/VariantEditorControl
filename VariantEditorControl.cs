@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
 using System.Data;
-
+using System.Drawing;
 namespace VariantEditorControl
 {
 
@@ -39,7 +39,7 @@ namespace VariantEditorControl
         public event Notify IntListener;
 
         Dictionary<NFUnitCls.Unit, string> UnitToString = new Dictionary<NFUnitCls.Unit, string>() {
-            { NFUnitCls.Unit.NFUnitNone, "" },
+            { NFUnitCls.Unit.NFUnitNone, "None" },
             { NFUnitCls.Unit.NFUnitInch, "Inch" },
             { NFUnitCls.Unit.NFUnitM, "Meter" },
             { NFUnitCls.Unit.NFUnitA, "Ampere" },
@@ -63,15 +63,27 @@ namespace VariantEditorControl
             { NFUnitCls.Unit.NFUnitInvalidUnit, "Invalid Unit" }
         };
 
+        Dictionary<NFVariant.DataType, string> TypeToString = new Dictionary<NFVariant.DataType, string>()
+        {
+            {NFVariant.DataType.BOOL_TYPE, "Bool" },
+            {NFVariant.DataType.DOUBLE_TYPE, "Double" },
+            {NFVariant.DataType.DOUBLE_VECTOR_TYPE, "Double Vector" },
+            {NFVariant.DataType.FLOAT_TYPE, "Float" },
+            {NFVariant.DataType.INT_TYPE, "Int" },
+            {NFVariant.DataType.INT_VECTOR_TYPE, "Int Vector" },
+            {NFVariant.DataType.STRING_TYPE, "String" },
+            {NFVariant.DataType.STRING_VECTOR_TYPE, "String Vector" },
+            {NFVariant.DataType.UNDEFINED_TYPE, "Undefined" }
+        };
         private int mNumberOfRows;
         private NFParameterSetPointer p = NFParameterSet.New();
-
 
         private NFParameterSetPointer parameterSet;
         private NFParameterSetReaderPointer reader = NFParameterSetReader.New();
         private NFParameterSetWriterPointer writer = NFParameterSetWriter.New();
 
-        public void LoadData(NFParameterSetPointer selectedParam)
+
+        public void LoadData(NFParameterSetReaderPointer selectedParam)
         {
             mainTable.Controls.Clear();
 
@@ -79,48 +91,151 @@ namespace VariantEditorControl
             
             reader.setSource("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
             bool success = reader.read();
-            System.Drawing.Size size = new System.Drawing.Size(150, 20);
+            //System.Drawing.Size size = new System.Drawing.Size(150, 20);
             if (success)
             {
                 parameterSet = reader.getParameterSet();
                 ComboBox cb = new ComboBox()
                 {
-                    Size = size
+                    Size = new Size(170, 50),
+                    DropDownStyle = ComboBoxStyle.DropDownList
                 };
                 List<string> ls = new List<string>(parameterSet.getParameterNames());
                 cb.DataSource = ls;
                 //Console.WriteLine(parameterSet.getParameter("MPD_CONTROL_TIMEOUT").getInt());
                 mainTable.Controls.Add(cb, 1, 1);
 
-                Label type = new Label();
-                Label unit = new Label();
-                Label UnitMultiplicator = new Label();
-                Label UnitExponent = new Label();
-                Label ValueLabel = new Label();
-                NumericUpDown NumVal = new NumericUpDown();
-                
+                Label type = new Label()
+                {
+                    Font = new Font("Arial", 10)
+                };
+                Label unit = new Label()
+                {
+                    Font = new Font("Arial", 10)
+                };
+                Label UnitMultiplicator = new Label()
+                {
+                    Font = new Font("Arial", 10)
+                };
+                Label UnitExponent = new Label()
+                {
+                    Font = new Font("Arial", 10)
+                };
+                //Label ValueLabel = new Label();
+                TextBox StringValueText = new TextBox()
+                {
+                    Size = new Size(200, 30),
+                    Font = new Font("Arial", 10)
+                };
+                string assign = "";
+                NumericUpDown NumVal = new NumericUpDown()
+                {
+                    Enabled = false
+                };
+                ComboBox cbVectorInt = new ComboBox
+                {
+                    Size = new Size(150, 20)
+                };
+                ComboBox cbVectorDouble = new ComboBox
+                {
+                    Size = new Size(150, 20)
+                };
+                //NumVal.Maximum = Decimal.MaxValue;
+                //NumVal.Minimum = Int64.MinValue;
+
                 cb.SelectedIndexChanged += (s, e) =>
                     {
-                        string str = (string)(s as ComboBox).SelectedItem;
+                        mainTable.Controls.Remove(StringValueText);
+                        mainTable.Controls.Remove(NumVal);
+                        mainTable.Controls.Remove(cbVectorInt);
+                        mainTable.Controls.Remove(cbVectorDouble);
+                        NumVal.DataBindings.Clear();
+                        NumVal.Refresh();
+                        //NumVal.DecimalPlaces = 2;
+                        //NumVal.ResetText();
+                        StringValueText.DataBindings.Clear();
+
+                        string str = (string)(s as ComboBox).SelectedValue;
                         NFVariant val = parameterSet.getParameter(str);
+
+                        StringValueText.Text = "";
                         
-                        type.Text = val.getUnitType().ToString();
-                        unit.Text = val.getUnit().ToString();
+                            switch (parameterSet.getParameter(str).getType())
+                            {
+                            case NFVariant.DataType.INT_TYPE:
+                                assign = "asInteger";
+                                NumVal.Enabled = true;
+                                NumVal.Maximum = int.MaxValue;
+                                NumVal.Minimum = int.MinValue;
+                                NumVal.DataBindings.Add("Value", new VariantBindingProperties(val), assign);
+                                mainTable.Controls.Add(NumVal, 6, 6);
+                                break;
+                            case NFVariant.DataType.INT_VECTOR_TYPE:
+                                mainTable.Controls.Remove(NumVal);
+                                uint count = val.getNumberOfElements();
+                                long[] intList = new long[count];
+                                val.getIntVector(intList, count);
+                                List<long> list = new List<long>(intList);
+                                cbVectorInt.DataSource = list;
+                                mainTable.Controls.Add(cbVectorInt,6,6);
+                                break;
+                            case NFVariant.DataType.FLOAT_TYPE:
+                                // ToDo
+                                //Use Texbox here
+                                // Create custom TextBox Control or Preventin non-Digit input
+                                // https://social.technet.microsoft.com/wiki/contents/articles/26406.how-to-create-a-windows-forms-textbox-which-only-accepts-numbers-or-other-constrained-input.aspx#Determining_Valid_Input
+                                assign = "asFloat";
+                                NumVal.Enabled = true;
+                                //NumVal.DecimalPlaces = 2;
+                                NumVal.Maximum = decimal.MaxValue;
+                                NumVal.Minimum = decimal.MinValue;
+                                
+                                NumVal.DataBindings.Add("Value", new VariantBindingProperties(val), assign);
+                                mainTable.Controls.Add(NumVal, 6, 6);
+                                break;
+                            case NFVariant.DataType.STRING_TYPE:
+                                assign = "asString";
+                                StringValueText.Text = val.valueToString();
+                                mainTable.Controls.Remove(NumVal);
+                                mainTable.Controls.Add(StringValueText, 7, 6);
+                                NumVal.DataBindings.Clear();
+                                NumVal.ResetText();
+                                NumVal.Enabled = false;
+                                StringValueText.DataBindings.Add("Text", new VariantBindingProperties(val), assign);
+                                break;
+                            case NFVariant.DataType.BOOL_TYPE:
+                               
+                                break;
+                            case NFVariant.DataType.DOUBLE_VECTOR_TYPE:
+                                mainTable.Controls.Remove(NumVal);
+                                uint doubleCount = val.getNumberOfElements();
+                                double[] doubleList = new double[doubleCount];
+                                val.getDoubleVector(doubleList, doubleCount);
+                                List<double> finalList = new List<double>(doubleList);
+                                cbVectorDouble.DataSource = finalList;
+                                mainTable.Controls.Add(cbVectorDouble, 6, 6);
+                                break;
+
+                                default:
+                                    break;
+                            }
+
+                        type.Text = TypeToString[val.getType()];
+                        unit.Text = UnitToString[val.getUnitType()];
                         UnitMultiplicator.Text = val.getUnitMultiplicator().ToString();
                         UnitExponent.Text = val.getUnitExponent().ToString();
-                        ValueLabel.Text = val.getValue().ToString();
-                      
-                        NumVal.DataBindings.Add("", new VariantBindingProperties(parameterSet.getParameter(str)), "asInteger");
+                        
+
+                        //NumVal.DataBindings.Add("Value", new VariantBindingProperties(val), assign);
                         //Console.WriteLine(parameterSet.getParameter(str).getUnit());
-                        IntListener?.Invoke();
+                        //IntListener?.Invoke();
                     };
                 mainTable.Controls.Add(type,1,6);
                 mainTable.Controls.Add(unit,3,6);
                 mainTable.Controls.Add(UnitMultiplicator,4, 6);
                 mainTable.Controls.Add(UnitExponent, 5, 6);
-                //mainTable.Controls.Add(ValueLabel, 6, 6);
-                mainTable.Controls.Add(NumVal, 6, 6);
-               
+                
+                
             }
             return;
         }
@@ -428,39 +543,53 @@ namespace VariantEditorControl
 
         private void CreateTableHeader()
         {
-            System.Drawing.Size size = new System.Drawing.Size(150, 20);
+            Size size = new Size(150, 30);
             const int rowIndex = 0;
             Label LType = new Label()
             {
                 Size = size,
                 Text = "Type",
-                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                ForeColor = Color.Black
             };
             Label LUnit = new Label()
             {
                 Size = size,
                 Text = "Unit",
-                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                ForeColor = Color.Black
             };
             Label LUnitMultiplicator = new Label()
             {
                 Size = size,
                 Text = "UnitMultiplicator",
-                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                ForeColor = Color.Black
             };
             Label LUnitExponent = new Label()
             {
                 Size = size,
                 Text = "UnitExponent",
-                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                ForeColor = Color.Black
             };
-
+            
             Label LValue = new Label()
             {
                 Size = size,
                 Text = "Value",
-                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                ForeColor = Color.Black
             };
+           
+            Label LStringValue = new Label()
+            {
+                Size = size,
+                Text = "String Value",
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                ForeColor = Color.Black
+            };
+            mainTable.Controls.Add(LStringValue, 7, 5);
             mainTable.Controls.Add(LValue, 6, 5);
             mainTable.Controls.Add(LUnitExponent, 5, 5);
             mainTable.Controls.Add(LUnitMultiplicator, 4, 5);
@@ -493,7 +622,7 @@ namespace VariantEditorControl
             //mainTable.Controls.Add(l10, 1, rowIndex);
             //mainTable.Controls.Add(l20, 2, rowIndex);
             //mainTable.Controls.Add(lTest, 3, rowIndex);
-            //mainTable.RowStyles[rowIndex].SizeType = SizeType.AutoSize;
+            mainTable.RowStyles[rowIndex].SizeType = SizeType.AutoSize;
             return;
         }
     }
