@@ -36,7 +36,6 @@ namespace VariantEditorControl
 
     public partial class VariantEditorControl : UserControl
     {
-        //public event EventHandler IntListener; // testing..
         public event Notify IntListener;
 
         Dictionary<NFUnitCls.Unit, string> UnitToString = new Dictionary<NFUnitCls.Unit, string>() {
@@ -76,12 +75,11 @@ namespace VariantEditorControl
         {
             mainTable.Controls.Clear();
 
-
-            System.Drawing.Size size = new System.Drawing.Size(150, 20);
-
+            CreateTableHeader();
+            
             reader.setSource("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
             bool success = reader.read();
-            
+            System.Drawing.Size size = new System.Drawing.Size(150, 20);
             if (success)
             {
                 parameterSet = reader.getParameterSet();
@@ -89,7 +87,6 @@ namespace VariantEditorControl
                 {
                     Size = size
                 };
-                
                 List<string> ls = new List<string>(parameterSet.getParameterNames());
                 cb.DataSource = ls;
                 //Console.WriteLine(parameterSet.getParameter("MPD_CONTROL_TIMEOUT").getInt());
@@ -105,18 +102,15 @@ namespace VariantEditorControl
                 cb.SelectedIndexChanged += (s, e) =>
                     {
                         string str = (string)(s as ComboBox).SelectedItem;
-
                         NFVariant val = parameterSet.getParameter(str);
+                        
                         type.Text = val.getUnitType().ToString();
                         unit.Text = val.getUnit().ToString();
                         UnitMultiplicator.Text = val.getUnitMultiplicator().ToString();
                         UnitExponent.Text = val.getUnitExponent().ToString();
                         ValueLabel.Text = val.getValue().ToString();
-                        // todo:
-                        // Check if is integer or double
-                        // refresh on value change
-                        // get the right unit and type
-                        NumVal.DataBindings.Add("Value", new VariantBindingProperties(parameterSet.getParameter(str)), "asInteger");
+                      
+                        NumVal.DataBindings.Add("", new VariantBindingProperties(parameterSet.getParameter(str)), "asInteger");
                         //Console.WriteLine(parameterSet.getParameter(str).getUnit());
                         IntListener?.Invoke();
                     };
@@ -126,53 +120,7 @@ namespace VariantEditorControl
                 mainTable.Controls.Add(UnitExponent, 5, 6);
                 //mainTable.Controls.Add(ValueLabel, 6, 6);
                 mainTable.Controls.Add(NumVal, 6, 6);
-                Label LType = new Label()
-                {
-                    Size = size,
-                    Text = "Type",
-                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-                };
-                Label LUnit = new Label()
-                {
-                    Size = size,
-                    Text = "Unit",
-                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-                };
-                Label LUnitMultiplicator = new Label()
-                {
-                    Size = size,
-                    Text = "UnitMultiplicator",
-                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-                };
-                Label LUnitExponent = new Label()
-                {
-                    Size = size,
-                    Text = "UnitExponent",
-                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-                };
-
-                Label LValue = new Label()
-                {
-                    Size = size,
-                    Text = "Value",
-                    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-                };
-                mainTable.Controls.Add(LValue, 6, 5);
-                mainTable.Controls.Add(LUnitExponent, 5, 5);
-                mainTable.Controls.Add(LUnitMultiplicator, 4, 5);
-                mainTable.Controls.Add(LUnit, 3, 5);
-                mainTable.Controls.Add(LType, 1, 5);
-
-                //DataSet ds = new DataSet();
-                //ds.ReadXml("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
-                //DataGridView dgView = new DataGridView()
-                //{
-                //    Size = size,
-                //    //DataSource = new BindingSource(ls, null)
-                //    //DataSource = ds.Tables[1]
-                //    //DataSource = ls
-                //};
-                //mainTable.Controls.Add(dgView, 1, 1);
+               
             }
             return;
         }
@@ -480,35 +428,72 @@ namespace VariantEditorControl
 
         private void CreateTableHeader()
         {
+            System.Drawing.Size size = new System.Drawing.Size(150, 20);
             const int rowIndex = 0;
-            Label l00 = new Label
+            Label LType = new Label()
             {
-                Text = "Name",
-
+                Size = size,
+                Text = "Type",
+                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+            };
+            Label LUnit = new Label()
+            {
+                Size = size,
+                Text = "Unit",
+                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+            };
+            Label LUnitMultiplicator = new Label()
+            {
+                Size = size,
+                Text = "UnitMultiplicator",
+                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+            };
+            Label LUnitExponent = new Label()
+            {
+                Size = size,
+                Text = "UnitExponent",
                 Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
             };
 
-            Label l10 = new Label
+            Label LValue = new Label()
             {
+                Size = size,
                 Text = "Value",
                 Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
             };
+            mainTable.Controls.Add(LValue, 6, 5);
+            mainTable.Controls.Add(LUnitExponent, 5, 5);
+            mainTable.Controls.Add(LUnitMultiplicator, 4, 5);
+            mainTable.Controls.Add(LUnit, 3, 5);
+            mainTable.Controls.Add(LType, 1, 5);
+            //Label l00 = new Label
+            //{
+            //    Text = "Name",
 
-            Label l20 = new Label
-            {
-                Anchor = AnchorStyles.Left,
-                Text = "Unit",
+            //    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+            //};
 
-                Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-            };
+            //Label l10 = new Label
+            //{
+            //    Text = "Value",
+            //    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+            //};
 
-            Label lTest = new Label { Text = "test" };
+            //Label l20 = new Label
+            //{
+            //    Anchor = AnchorStyles.Left,
+            //    Text = "Unit",
 
-            mainTable.Controls.Add(l00, 0, rowIndex);
-            mainTable.Controls.Add(l10, 1, rowIndex);
-            mainTable.Controls.Add(l20, 2, rowIndex);
-            mainTable.Controls.Add(lTest, 3, rowIndex);
-            mainTable.RowStyles[rowIndex].SizeType = SizeType.AutoSize;
+            //    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
+            //};
+
+            //Label lTest = new Label { Text = "test" };
+
+            //mainTable.Controls.Add(l00, 0, rowIndex);
+            //mainTable.Controls.Add(l10, 1, rowIndex);
+            //mainTable.Controls.Add(l20, 2, rowIndex);
+            //mainTable.Controls.Add(lTest, 3, rowIndex);
+            //mainTable.RowStyles[rowIndex].SizeType = SizeType.AutoSize;
             return;
         }
     }
