@@ -22,6 +22,7 @@
 namespace DataTypes
 {
     using de.nanofocus.NFEval;
+    using System;
     using System.Collections.Generic;
     public class FilePath
     {
@@ -53,6 +54,11 @@ namespace DataTypes
         {
             set => data.setFloat(value);
             get => data.getFloat();
+        }
+        public string asFloatString
+        {
+            set => data.setFloat((float)Convert.ToDecimal(value));
+            get => data.getFloat().ToString("0.##########"); 
         }
         public string asString
         {

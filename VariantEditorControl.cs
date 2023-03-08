@@ -28,6 +28,9 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Data;
 using System.Drawing;
+using NFNumericTextBox;
+using System.Globalization;
+
 namespace VariantEditorControl
 {
 
@@ -104,6 +107,7 @@ namespace VariantEditorControl
                 cb.DataSource = ls;
                 //Console.WriteLine(parameterSet.getParameter("MPD_CONTROL_TIMEOUT").getInt());
                 mainTable.Controls.Add(cb, 1, 1);
+                string assign = "";
 
                 Label type = new Label()
                 {
@@ -121,13 +125,11 @@ namespace VariantEditorControl
                 {
                     Font = new Font("Arial", 10)
                 };
-                //Label ValueLabel = new Label();
                 TextBox StringValueText = new TextBox()
                 {
                     Size = new Size(200, 30),
                     Font = new Font("Arial", 10)
                 };
-                string assign = "";
                 NumericUpDown NumVal = new NumericUpDown()
                 {
                     Enabled = false
@@ -140,26 +142,43 @@ namespace VariantEditorControl
                 {
                     Size = new Size(150, 20)
                 };
-                //NumVal.Maximum = Decimal.MaxValue;
-                //NumVal.Minimum = Int64.MinValue;
+
+                //TextBox FloatTextbox = new TextBox()
+                //{
+                //    Size = new Size(200, 30),
+                //    Font = new Font("Arial", 10)
+                //};
+
+                Label testLabel = new Label();
+                NumericTextBox NFfloatTextBox = new NumericTextBox()
+                {
+                    Size = new Size(200, 30),
+                    Font = new Font("Arial", 10)
+                };
 
                 cb.SelectedIndexChanged += (s, e) =>
                     {
                         mainTable.Controls.Remove(StringValueText);
+                        mainTable.Controls.Remove(NFfloatTextBox);
                         mainTable.Controls.Remove(NumVal);
                         mainTable.Controls.Remove(cbVectorInt);
                         mainTable.Controls.Remove(cbVectorDouble);
-                        NumVal.DataBindings.Clear();
+
                         NumVal.Refresh();
-                        //NumVal.DecimalPlaces = 2;
-                        //NumVal.ResetText();
+                        NFfloatTextBox.Refresh();
+                        StringValueText.Refresh();
+
+                        NumVal.DataBindings.Clear();
                         StringValueText.DataBindings.Clear();
+                        NFfloatTextBox.DataBindings.Clear();
+
+                        StringValueText.Text = "";
+                        NFfloatTextBox.Text = "";
 
                         string str = (string)(s as ComboBox).SelectedValue;
                         NFVariant val = parameterSet.getParameter(str);
 
-                        StringValueText.Text = "";
-                        
+
                             switch (parameterSet.getParameter(str).getType())
                             {
                             case NFVariant.DataType.INT_TYPE:
@@ -171,7 +190,6 @@ namespace VariantEditorControl
                                 mainTable.Controls.Add(NumVal, 6, 6);
                                 break;
                             case NFVariant.DataType.INT_VECTOR_TYPE:
-                                mainTable.Controls.Remove(NumVal);
                                 uint count = val.getNumberOfElements();
                                 long[] intList = new long[count];
                                 val.getIntVector(intList, count);
@@ -180,34 +198,34 @@ namespace VariantEditorControl
                                 mainTable.Controls.Add(cbVectorInt,6,6);
                                 break;
                             case NFVariant.DataType.FLOAT_TYPE:
-                                // ToDo
-                                //Use Texbox here
-                                // Create custom TextBox Control or Preventin non-Digit input
-                                // https://social.technet.microsoft.com/wiki/contents/articles/26406.how-to-create-a-windows-forms-textbox-which-only-accepts-numbers-or-other-constrained-input.aspx#Determining_Valid_Input
-                                assign = "asFloat";
-                                NumVal.Enabled = true;
-                                //NumVal.DecimalPlaces = 2;
-                                NumVal.Maximum = decimal.MaxValue;
-                                NumVal.Minimum = decimal.MinValue;
                                 
-                                NumVal.DataBindings.Add("Value", new VariantBindingProperties(val), assign);
-                                mainTable.Controls.Add(NumVal, 6, 6);
+                                assign = "asFloatString";
+                                //FloatTextbox.Text = val.valueToString();
+                                //FloatTextbox.Text = val.getFloat().ToString();
+
+                                //NFfloatTextBox.Text = val.getFloat().ToString();
+
+                                mainTable.Controls.Add(NFfloatTextBox, 6, 6);
+                                mainTable.Controls.Add(testLabel, 8, 6);
+
+                                NFfloatTextBox.DataBindings.Add("Text", new VariantBindingProperties(val), assign);
+
+                                //string floatValue = NFfloatTextBox.Text;
+                                //float f = float.Parse(floatValue);
+                                var f = Convert.ToSingle(NFfloatTextBox.Text, CultureInfo.InvariantCulture);
+                                Console.WriteLine(f);
                                 break;
                             case NFVariant.DataType.STRING_TYPE:
                                 assign = "asString";
                                 StringValueText.Text = val.valueToString();
-                                mainTable.Controls.Remove(NumVal);
                                 mainTable.Controls.Add(StringValueText, 7, 6);
-                                NumVal.DataBindings.Clear();
-                                NumVal.ResetText();
-                                NumVal.Enabled = false;
+                               
                                 StringValueText.DataBindings.Add("Text", new VariantBindingProperties(val), assign);
                                 break;
                             case NFVariant.DataType.BOOL_TYPE:
                                
                                 break;
                             case NFVariant.DataType.DOUBLE_VECTOR_TYPE:
-                                mainTable.Controls.Remove(NumVal);
                                 uint doubleCount = val.getNumberOfElements();
                                 double[] doubleList = new double[doubleCount];
                                 val.getDoubleVector(doubleList, doubleCount);
@@ -224,7 +242,6 @@ namespace VariantEditorControl
                         unit.Text = UnitToString[val.getUnitType()];
                         UnitMultiplicator.Text = val.getUnitMultiplicator().ToString();
                         UnitExponent.Text = val.getUnitExponent().ToString();
-                        
 
                         //NumVal.DataBindings.Add("Value", new VariantBindingProperties(val), assign);
                         //Console.WriteLine(parameterSet.getParameter(str).getUnit());
@@ -234,7 +251,6 @@ namespace VariantEditorControl
                 mainTable.Controls.Add(unit,3,6);
                 mainTable.Controls.Add(UnitMultiplicator,4, 6);
                 mainTable.Controls.Add(UnitExponent, 5, 6);
-                
                 
             }
             return;

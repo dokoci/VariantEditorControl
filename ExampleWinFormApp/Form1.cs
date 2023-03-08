@@ -13,6 +13,7 @@ namespace ExampleWinFormApp
         VariantEditorControl.VariantEditorControl vc = new VariantEditorControl.VariantEditorControl();
         VariantEditorControl.VariantEditorControl vc1 = new VariantEditorControl.VariantEditorControl();
 
+
         NFParameterSetReaderPointer param = NFParameterSetReader.New();
 
         NFParameterSetPointer data = NFParameterSet.New();
@@ -40,6 +41,7 @@ namespace ExampleWinFormApp
         {
             InitializeComponent();
             vc.IntListener += RefreshChart;
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -73,10 +75,10 @@ namespace ExampleWinFormApp
             panel1.Controls.Add(vc);
             panel2.Controls.Add(vc1);
             vc.SetDataList(data, dataMin, dataMax, dataDiscrete);
-            
             vc1.LoadData(param);
             RefreshChart();
             //dataGridView1.DataSource = param;
+
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -113,6 +115,9 @@ namespace ExampleWinFormApp
             RefreshChart();
         }
 
+        private void groupBox4_Enter(object sender, EventArgs e)
+        {
 
+        }
     }
 }
