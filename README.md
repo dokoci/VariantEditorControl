@@ -2,4 +2,5 @@
 
 Displays  list of variant   data types  in a table.
 
+![](chart.png)
 ![](screen01.PNG) 
