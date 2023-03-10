@@ -4,120 +4,125 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using de.nanofocus.NFEval;
+using System.IO;
+using System.Security.Cryptography;
 
 namespace ExampleWinFormApp
 {
     public partial class Form1 : Form
     {
-        
+
         VariantEditorControl.VariantEditorControl vc = new VariantEditorControl.VariantEditorControl();
-        VariantEditorControl.VariantEditorControl vc1 = new VariantEditorControl.VariantEditorControl();
 
 
-        NFParameterSetReaderPointer param = NFParameterSetReader.New();
-
-        NFParameterSetPointer data = NFParameterSet.New();
-        NFParameterSetPointer dataMin = NFParameterSet.New();
-        NFParameterSetPointer dataMax = NFParameterSet.New();
-        NFParameterSetPointer dataDiscrete = NFParameterSet.New();
-
-        public Dictionary<int, string> ComboList { get; set; } = new Dictionary<int, string>();
-        public Dictionary<int, int> MyList { get; set; } = new Dictionary<int, int>();
-        
-        
-        private void toolTipCoordinates(object sender, ToolTipEventArgs e)
-        {
-            switch (e.HitTestResult.ChartElementType)
-            {
-                case ChartElementType.DataPoint:
-                    DataPoint dPoint = e.HitTestResult.Series.Points[e.HitTestResult.PointIndex];
-                    e.Text = string.Format("X:   {0}\nY:   {1}", dPoint.XValue, dPoint.YValues[0]);
-                    break;
-                default:
-                    break;
-            }
-        }
+       
         public Form1()
         {
             InitializeComponent();
-            vc.IntListener += RefreshChart;
-            
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            chart1.GetToolTipText += toolTipCoordinates;
-
-            MyList.Add(1, 5);
-            MyList.Add(3, 2);
-            MyList.Add(8, 9);
-            MyList.Add(11, 8);
-            MyList.Add(15, 9);
-
-            ComboList[0] = "Zero";
-            ComboList[1] = "One";
-            ComboList[2] = "Two";
-            ComboList[3] = "Three";
-            ComboList[4] = "Four";
-            ComboList[5] = "Five";
-            comboBox1.DataSource = new BindingSource(ComboList, null);
-            comboBox1.DisplayMember = "Key";
-            //comboBox1.ValueMember = "Value";
-
-            Random rand = new Random();
-            int x = rand.Next(0, 20);
-            int y = rand.Next(0, 20);
-
-            data.setParameter("X", new NFVariant(x, NFUnitCls.Unit.NFUnitM));
-            data.setParameter("Y", new NFVariant(y, NFUnitCls.Unit.NFUnitM));
-
-            dataDiscrete.setParameter("test", new NFVariant(ComboList.Keys.ToString(), NFUnitCls.Unit.NFUnitA));
-            panel1.Controls.Add(vc);
-            panel2.Controls.Add(vc1);
-            vc.SetDataList(data, dataMin, dataMax, dataDiscrete);
-            vc1.LoadData(param);
-            RefreshChart();
-            //dataGridView1.DataSource = param;
-
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            label1.Text = comboBox1.SelectedValue.ToString();
-            //label1.Text = data.getParameter("Param1").getInt().ToString();
-        }
-
-        private void RefreshChart()
-        {
-            chart1.Series.Clear();
-            //chart1.Titles.Add("This is my Test Chart");
-            chart1.ChartAreas[0].AxisY.Interval =   1;
-            chart1.ChartAreas[0].AxisX.Interval =   1;
-            chart1.ChartAreas[0].AxisY.Minimum =    0;
-            chart1.ChartAreas[0].AxisY.Maximum =    20;
-            chart1.ChartAreas[0].AxisX.Minimum =    0;
-            chart1.ChartAreas[0].AxisX.Maximum =    20;
-
-            Series series = chart1.Series.Add("Dictionary X , Y Values");
-            series.ChartType = SeriesChartType.Spline;
-            chart1.Series["Dictionary X , Y Values"].MarkerStyle = MarkerStyle.Circle;
-            chart1.Series["Dictionary X , Y Values"].MarkerSize = 12;
-            chart1.Series["Dictionary X , Y Values"].Color = Color.Red;
-            series.Points.DataBindXY(MyList.Keys, MyList.Values);
-            series.Points.AddXY(data.getParameter("X").getInt(), data.getParameter("Y").getInt());
+            label2.Text = "Drop your file here.";
             
-            //Console.WriteLine(param.getParameter("test").getValue());
+            panel2.Controls.Add(vc);
         }
 
        
-        private void button1_Click(object sender, EventArgs e)
+        private void Form1_DragEnter(object sender, DragEventArgs e)
         {
-            RefreshChart();
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
         }
 
-        private void groupBox4_Enter(object sender, EventArgs e)
+        private void panel2_DragEnter(object sender, DragEventArgs e)
         {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
 
+        private void Form1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] filePath = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+        }
+
+        private void panel2_DragDrop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (var file in files)
+            {
+                string ext = Path.GetExtension(file);
+                if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                    vc.LoadData(file);
+                    if (toolStripStatusLabel2.Text == "")
+                    {
+                        toolStripStatusLabel2.Text += Path.GetFullPath(file);
+                    }
+                    label2.Text = "";
+                    string tempDir = Path.Combine(Path.GetTempPath(), "VariantEditor");
+                    Directory.CreateDirectory(tempDir);
+                    return;
+                }
+            }
+        }
+
+        private string GetFileHash(string fInfo)
+        {
+            HashAlgorithm hashAlgo = HashAlgorithm.Create();
+            using (var stream = new FileStream(fInfo, FileMode.Open, FileAccess.Read))
+            {
+
+                var hash = hashAlgo.ComputeHash(stream);
+                hashAlgo.Dispose();
+                return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string path = string.Empty;
+
+            using (openFileDialog1)
+            {
+                openFileDialog1.Filter = "NPSX Files (*.npsx)|*.npsx";
+                openFileDialog1.ShowReadOnly = true;
+                openFileDialog1.RestoreDirectory = true;
+
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    path = openFileDialog1.FileName;
+                    string fileName = Path.GetFileName(path);
+                    vc.LoadData(path);
+                    Console.WriteLine(GetFileHash(path));
+                    if (toolStripStatusLabel2.Text == "")
+                    {
+                        toolStripStatusLabel2.Text += Path.GetFullPath(path);
+                    }
+                    label2.Text = "";
+                    string tempDir = Path.Combine(Path.GetTempPath(), "VariantEditor");
+                    Directory.CreateDirectory(tempDir);
+                }
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

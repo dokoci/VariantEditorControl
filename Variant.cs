@@ -59,6 +59,7 @@ namespace DataTypes
         {
             set => data.setFloat((float)Convert.ToDecimal(value));
             get => data.getFloat().ToString("0.##########"); 
+            //get => data.getFloat().ToString("G");
         }
         public string asString
         {

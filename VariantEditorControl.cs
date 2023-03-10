@@ -86,13 +86,14 @@ namespace VariantEditorControl
         private NFParameterSetWriterPointer writer = NFParameterSetWriter.New();
 
 
-        public void LoadData(NFParameterSetReaderPointer selectedParam)
+        public void LoadData(string path)
         {
             mainTable.Controls.Clear();
 
             CreateTableHeader();
-            
-            reader.setSource("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
+            string tempStr = path;
+            //reader.setSource("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
+            reader.setSource(tempStr);
             bool success = reader.read();
             //System.Drawing.Size size = new System.Drawing.Size(150, 20);
             if (success)
@@ -194,15 +195,16 @@ namespace VariantEditorControl
                                 long[] intList = new long[count];
                                 val.getIntVector(intList, count);
                                 List<long> list = new List<long>(intList);
-                                cbVectorInt.DataSource = list;
-                                mainTable.Controls.Add(cbVectorInt,6,6);
+                                //cbVectorInt.DataSource = list;
+                                //mainTable.Controls.Add(cbVectorInt,6,6);
+                                NFfloatTextBox.Text = string.Join(Environment.NewLine + " | ", list.ToArray());
+                                mainTable.Controls.Add(NFfloatTextBox,6,6);
                                 break;
                             case NFVariant.DataType.FLOAT_TYPE:
                                 
                                 assign = "asFloatString";
                                 //FloatTextbox.Text = val.valueToString();
                                 //FloatTextbox.Text = val.getFloat().ToString();
-
                                 //NFfloatTextBox.Text = val.getFloat().ToString();
 
                                 mainTable.Controls.Add(NFfloatTextBox, 6, 6);
@@ -218,7 +220,7 @@ namespace VariantEditorControl
                             case NFVariant.DataType.STRING_TYPE:
                                 assign = "asString";
                                 StringValueText.Text = val.valueToString();
-                                mainTable.Controls.Add(StringValueText, 7, 6);
+                                mainTable.Controls.Add(StringValueText, 6, 6);
                                
                                 StringValueText.DataBindings.Add("Text", new VariantBindingProperties(val), assign);
                                 break;
@@ -230,8 +232,10 @@ namespace VariantEditorControl
                                 double[] doubleList = new double[doubleCount];
                                 val.getDoubleVector(doubleList, doubleCount);
                                 List<double> finalList = new List<double>(doubleList);
-                                cbVectorDouble.DataSource = finalList;
-                                mainTable.Controls.Add(cbVectorDouble, 6, 6);
+                                //cbVectorDouble.DataSource = finalList;
+                                //mainTable.Controls.Add(cbVectorDouble, 6, 6);
+                                NFfloatTextBox.Text = string.Join(Environment.NewLine + " | ", finalList.ToArray());
+                                mainTable.Controls.Add(NFfloatTextBox, 6, 6);
                                 break;
 
                                 default:
@@ -598,14 +602,6 @@ namespace VariantEditorControl
                 ForeColor = Color.Black
             };
            
-            Label LStringValue = new Label()
-            {
-                Size = size,
-                Text = "String Value",
-                Font = new Font("Arial", 12, FontStyle.Bold),
-                ForeColor = Color.Black
-            };
-            mainTable.Controls.Add(LStringValue, 7, 5);
             mainTable.Controls.Add(LValue, 6, 5);
             mainTable.Controls.Add(LUnitExponent, 5, 5);
             mainTable.Controls.Add(LUnitMultiplicator, 4, 5);
