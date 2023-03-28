@@ -6,12 +6,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{79741127-01DC-4891-9842-6DA2CF096597}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ExampleWinFormApp</RootNamespace>
-    <AssemblyName>ExampleWinFormApp</AssemblyName>
+    <RootNamespace>VariantEditor</RootNamespace>
+    <AssemblyName>VariantEditor</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -22,10 +23,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
+    <SupportUrl>https://nanofocus.com</SupportUrl>
+    <ProductName>VariantEditor</ProductName>
+    <PublisherName>NanoFocus AG</PublisherName>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -67,12 +71,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>rodentia-icons_preferences-system.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="NFEval_CS_SDK">
       <HintPath>..\..\..\..\..\..\..\NFEvalSDK\bin\NFEval_CS_SDK.dll</HintPath>
-    </Reference>
-    <Reference Include="NFNumericTextBox">
-      <HintPath>..\..\..\..\..\source\repos\NFNumericTextBox\NFNumericTextBox\bin\Debug\NFNumericTextBox.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -107,6 +111,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -138,6 +143,18 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="npsx.ico" />
+    <Content Include="rodentia-icons_preferences-system.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FileAssociation Include=".npsx">
+      <Visible>False</Visible>
+      <Description>Parameter File</Description>
+      <Progid>VariantEditorApp</Progid>
+      <DefaultIcon>npsx.ico</DefaultIcon>
+    </FileAssociation>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

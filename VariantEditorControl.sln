@@ -5,7 +5,11 @@ VisualStudioVersion = 15.0.28307.1972
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VariantEditorControl", "VariantEditorControl.csproj", "{FE334C5B-A7E1-4BBF-8F34-81F13C7545FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleWinFormApp", "ExampleWinFormApp\ExampleWinFormApp.csproj", "{79741127-01DC-4891-9842-6DA2CF096597}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VariantEditor", "ExampleWinFormApp\VariantEditor.csproj", "{79741127-01DC-4891-9842-6DA2CF096597}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFVectorComboBox", "..\..\..\..\source\repos\NFVectorComboBox\NFVectorComboBox\NFVectorComboBox.csproj", "{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFNumericTextBox", "..\..\..\..\source\repos\NFNumericTextBox\NFNumericTextBox\NFNumericTextBox.csproj", "{8E1A3011-E6AE-480F-A8B4-B291623389B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +35,22 @@ Global
 		{79741127-01DC-4891-9842-6DA2CF096597}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{79741127-01DC-4891-9842-6DA2CF096597}.Release|x64.ActiveCfg = Debug|x64
 		{79741127-01DC-4891-9842-6DA2CF096597}.Release|x64.Build.0 = Debug|x64
+		{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}.Debug|x64.Build.0 = Debug|Any CPU
+		{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}.Release|x64.ActiveCfg = Release|Any CPU
+		{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}.Release|x64.Build.0 = Release|Any CPU
+		{8E1A3011-E6AE-480F-A8B4-B291623389B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E1A3011-E6AE-480F-A8B4-B291623389B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E1A3011-E6AE-480F-A8B4-B291623389B9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8E1A3011-E6AE-480F-A8B4-B291623389B9}.Debug|x64.Build.0 = Debug|Any CPU
+		{8E1A3011-E6AE-480F-A8B4-B291623389B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E1A3011-E6AE-480F-A8B4-B291623389B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E1A3011-E6AE-480F-A8B4-B291623389B9}.Release|x64.ActiveCfg = Release|Any CPU
+		{8E1A3011-E6AE-480F-A8B4-B291623389B9}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

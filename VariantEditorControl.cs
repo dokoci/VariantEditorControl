@@ -25,12 +25,9 @@ using de.nanofocus.NFEval;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Linq;
-using System.Data;
 using System.Drawing;
+using NFVectorComboBox;
 using NFNumericTextBox;
-using System.Globalization;
-
 namespace VariantEditorControl
 {
 
@@ -85,7 +82,10 @@ namespace VariantEditorControl
         private NFParameterSetReaderPointer reader = NFParameterSetReader.New();
         private NFParameterSetWriterPointer writer = NFParameterSetWriter.New();
 
+       public  string hexStringOriginal = null;
+       public  string hexStringEditet = null;
 
+        private BindingSource bindingSource = new BindingSource();
         public void LoadData(string path)
         {
             mainTable.Controls.Clear();
@@ -99,6 +99,7 @@ namespace VariantEditorControl
             if (success)
             {
                 parameterSet = reader.getParameterSet();
+                hexStringOriginal = parameterSet.toProtoBufHexString();
                 ComboBox cb = new ComboBox()
                 {
                     Size = new Size(170, 50),
@@ -118,11 +119,11 @@ namespace VariantEditorControl
                 {
                     Font = new Font("Arial", 10)
                 };
-                Label UnitMultiplicator = new Label()
+                Label Multiplicator = new Label()
                 {
                     Font = new Font("Arial", 10)
                 };
-                Label UnitExponent = new Label()
+                Label Exponent = new Label()
                 {
                     Font = new Font("Arial", 10)
                 };
@@ -144,41 +145,37 @@ namespace VariantEditorControl
                     Size = new Size(150, 20)
                 };
 
-                //TextBox FloatTextbox = new TextBox()
-                //{
-                //    Size = new Size(200, 30),
-                //    Font = new Font("Arial", 10)
-                //};
-
-                Label testLabel = new Label();
-                NumericTextBox NFfloatTextBox = new NumericTextBox()
+                NumericTextBox numericTextBox = new NumericTextBox()
                 {
                     Size = new Size(200, 30),
                     Font = new Font("Arial", 10)
                 };
 
+                VectorComboBox nfCombo = new VectorComboBox();
+
                 cb.SelectedIndexChanged += (s, e) =>
                     {
                         mainTable.Controls.Remove(StringValueText);
-                        mainTable.Controls.Remove(NFfloatTextBox);
+                        mainTable.Controls.Remove(numericTextBox);
                         mainTable.Controls.Remove(NumVal);
                         mainTable.Controls.Remove(cbVectorInt);
                         mainTable.Controls.Remove(cbVectorDouble);
-
+                        mainTable.Controls.Remove(nfCombo);
                         NumVal.Refresh();
-                        NFfloatTextBox.Refresh();
+                        numericTextBox.Refresh();
                         StringValueText.Refresh();
 
                         NumVal.DataBindings.Clear();
                         StringValueText.DataBindings.Clear();
-                        NFfloatTextBox.DataBindings.Clear();
+                        numericTextBox.DataBindings.Clear();
+                        nfCombo.bindingSource.Clear();
+                        bindingSource.Clear();
 
                         StringValueText.Text = "";
-                        NFfloatTextBox.Text = "";
+                        numericTextBox.Text = "";
 
                         string str = (string)(s as ComboBox).SelectedValue;
                         NFVariant val = parameterSet.getParameter(str);
-
 
                             switch (parameterSet.getParameter(str).getType())
                             {
@@ -190,52 +187,49 @@ namespace VariantEditorControl
                                 NumVal.DataBindings.Add("Value", new VariantBindingProperties(val), assign);
                                 mainTable.Controls.Add(NumVal, 6, 6);
                                 break;
+
                             case NFVariant.DataType.INT_VECTOR_TYPE:
+                                bindingSource.Clear();
+                                nfCombo.MyProperty = val;
+                                mainTable.Controls.Add(nfCombo, 6, 6);
+
                                 uint count = val.getNumberOfElements();
                                 long[] intList = new long[count];
                                 val.getIntVector(intList, count);
-                                List<long> list = new List<long>(intList);
-                                //cbVectorInt.DataSource = list;
-                                //mainTable.Controls.Add(cbVectorInt,6,6);
-                                NFfloatTextBox.Text = string.Join(Environment.NewLine + " | ", list.ToArray());
-                                mainTable.Controls.Add(NFfloatTextBox,6,6);
-                                break;
-                            case NFVariant.DataType.FLOAT_TYPE:
+                              
+                                bindingSource.DataSource = new VariantBindingProperties(val).asIntList;
+                                nfCombo.bindingSource.DataSource = bindingSource;
                                 
-                                assign = "asFloatString";
-                                //FloatTextbox.Text = val.valueToString();
-                                //FloatTextbox.Text = val.getFloat().ToString();
-                                //NFfloatTextBox.Text = val.getFloat().ToString();
-
-                                mainTable.Controls.Add(NFfloatTextBox, 6, 6);
-                                mainTable.Controls.Add(testLabel, 8, 6);
-
-                                NFfloatTextBox.DataBindings.Add("Text", new VariantBindingProperties(val), assign);
-
-                                //string floatValue = NFfloatTextBox.Text;
-                                //float f = float.Parse(floatValue);
-                                var f = Convert.ToSingle(NFfloatTextBox.Text, CultureInfo.InvariantCulture);
-                                Console.WriteLine(f);
                                 break;
+
+                            case NFVariant.DataType.DOUBLE_VECTOR_TYPE:
+                                bindingSource.Clear();
+                                nfCombo.MyProperty = val;
+                                mainTable.Controls.Add(nfCombo, 6, 6);
+
+                                uint doubleCount = val.getNumberOfElements();
+                                double[] doubleList = new double[doubleCount];
+                                val.getDoubleVector(doubleList, doubleCount);
+
+                                bindingSource.DataSource = new VariantBindingProperties(val).asDoubleList;
+                                nfCombo.bindingSource.DataSource = bindingSource;
+                                break;
+
+                            case NFVariant.DataType.FLOAT_TYPE:
+                                assign = "asFloat";
+                                mainTable.Controls.Add(numericTextBox, 6, 6);
+                                numericTextBox.DataBindings.Add("Text", new VariantBindingProperties(val), assign, true, DataSourceUpdateMode.OnPropertyChanged);
+                                break;
+                                
                             case NFVariant.DataType.STRING_TYPE:
                                 assign = "asString";
                                 StringValueText.Text = val.valueToString();
                                 mainTable.Controls.Add(StringValueText, 6, 6);
                                
-                                StringValueText.DataBindings.Add("Text", new VariantBindingProperties(val), assign);
+                                StringValueText.DataBindings.Add("Text", new VariantBindingProperties(val), assign, true, DataSourceUpdateMode.OnPropertyChanged);
                                 break;
+
                             case NFVariant.DataType.BOOL_TYPE:
-                               
-                                break;
-                            case NFVariant.DataType.DOUBLE_VECTOR_TYPE:
-                                uint doubleCount = val.getNumberOfElements();
-                                double[] doubleList = new double[doubleCount];
-                                val.getDoubleVector(doubleList, doubleCount);
-                                List<double> finalList = new List<double>(doubleList);
-                                //cbVectorDouble.DataSource = finalList;
-                                //mainTable.Controls.Add(cbVectorDouble, 6, 6);
-                                NFfloatTextBox.Text = string.Join(Environment.NewLine + " | ", finalList.ToArray());
-                                mainTable.Controls.Add(NFfloatTextBox, 6, 6);
                                 break;
 
                                 default:
@@ -244,25 +238,29 @@ namespace VariantEditorControl
 
                         type.Text = TypeToString[val.getType()];
                         unit.Text = UnitToString[val.getUnitType()];
-                        UnitMultiplicator.Text = val.getUnitMultiplicator().ToString();
-                        UnitExponent.Text = val.getUnitExponent().ToString();
-
-                        //NumVal.DataBindings.Add("Value", new VariantBindingProperties(val), assign);
-                        //Console.WriteLine(parameterSet.getParameter(str).getUnit());
-                        //IntListener?.Invoke();
+                        Multiplicator.Text = val.getUnitMultiplicator().ToString();
+                        Exponent.Text = val.getUnitExponent().ToString();
                     };
+
                 mainTable.Controls.Add(type,1,6);
                 mainTable.Controls.Add(unit,3,6);
-                mainTable.Controls.Add(UnitMultiplicator,4, 6);
-                mainTable.Controls.Add(UnitExponent, 5, 6);
-                
+                mainTable.Controls.Add(Multiplicator,4, 6);
+                mainTable.Controls.Add(Exponent, 5, 6);
             }
             return;
         }
 
-        public void SaveData()
+        public void SaveData(string location)
         {
-
+            if (location != null)
+            {
+                string dest = location;
+                //writer.setDestination("C:\\Users\\koci\\Desktop\\NFMsurfControl_Edited.npsx");
+                writer.setDestination(dest);
+                //hexStringEditet = parameterSet.toProtoBufHexString();
+                writer.setParameterSet(parameterSet);
+                writer.write();
+            }
         }
         public VariantEditorControl()
         {
@@ -563,7 +561,7 @@ namespace VariantEditorControl
 
         private void CreateTableHeader()
         {
-            Size size = new Size(150, 30);
+            Size size = new Size(110, 30);
             const int rowIndex = 0;
             Label LType = new Label()
             {
@@ -582,14 +580,14 @@ namespace VariantEditorControl
             Label LUnitMultiplicator = new Label()
             {
                 Size = size,
-                Text = "UnitMultiplicator",
+                Text = "Multiplicator",
                 Font = new Font("Arial", 12, FontStyle.Bold),
                 ForeColor = Color.Black
             };
             Label LUnitExponent = new Label()
             {
                 Size = size,
-                Text = "UnitExponent",
+                Text = "Exponent",
                 Font = new Font("Arial", 12, FontStyle.Bold),
                 ForeColor = Color.Black
             };
@@ -607,33 +605,7 @@ namespace VariantEditorControl
             mainTable.Controls.Add(LUnitMultiplicator, 4, 5);
             mainTable.Controls.Add(LUnit, 3, 5);
             mainTable.Controls.Add(LType, 1, 5);
-            //Label l00 = new Label
-            //{
-            //    Text = "Name",
-
-            //    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-            //};
-
-            //Label l10 = new Label
-            //{
-            //    Text = "Value",
-            //    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-            //};
-
-            //Label l20 = new Label
-            //{
-            //    Anchor = AnchorStyles.Left,
-            //    Text = "Unit",
-
-            //    Font = new System.Drawing.Font(DefaultFont, System.Drawing.FontStyle.Bold)
-            //};
-
-            //Label lTest = new Label { Text = "test" };
-
-            //mainTable.Controls.Add(l00, 0, rowIndex);
-            //mainTable.Controls.Add(l10, 1, rowIndex);
-            //mainTable.Controls.Add(l20, 2, rowIndex);
-            //mainTable.Controls.Add(lTest, 3, rowIndex);
+           
             mainTable.RowStyles[rowIndex].SizeType = SizeType.AutoSize;
             return;
         }

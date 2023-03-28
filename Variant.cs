@@ -24,6 +24,8 @@ namespace DataTypes
     using de.nanofocus.NFEval;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+
     public class FilePath
     {
         public string path;
@@ -58,8 +60,8 @@ namespace DataTypes
         public string asFloatString
         {
             set => data.setFloat((float)Convert.ToDecimal(value));
-            get => data.getFloat().ToString("0.##########"); 
-            //get => data.getFloat().ToString("G");
+            //get => data.getFloat().ToString("0.##########"); 
+            get => data.getFloat().ToString("G");
         }
         public string asString
         {
@@ -111,9 +113,7 @@ namespace DataTypes
                     i++;
                 }
 
-
                 data.setIntVector(intList, (uint)value.Count);
-
             }
             get
             {
@@ -128,29 +128,29 @@ namespace DataTypes
         {
             set
             {
-                double[] intList = new double[value.Count];
+                double[] doubleList = new double[value.Count];
                 //data.setIntList(value);
 
                 int i = 0;
                 foreach (var item in value)
                 {
 
-                    intList[i] = item;
+                    doubleList[i] = item;
                     i++;
                 }
 
 
-                data.setDoubleVector(intList, (uint)value.Count);
+                data.setDoubleVector(doubleList, (uint)value.Count);
 
             }
             get
             {
                 uint count = data.getNumberOfElements();
-                double[] intList = new double[count];
-                data.getDoubleVector(intList, count);
-                List<int> list = new List<int>();
+                double[] doubleList = new double[count];
+                data.getDoubleVector(doubleList, count);
+                //List<int> list = new List<int>();
 
-                return new List<double>(intList);
+                return new List<double>(doubleList);
             }
         }
         private NFVariant data;

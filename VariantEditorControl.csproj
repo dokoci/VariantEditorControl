@@ -52,9 +52,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\NFEvalSDK\bin\NFEval_CS_SDK.dll</HintPath>
     </Reference>
-    <Reference Include="NFNumericTextBox">
-      <HintPath>..\..\..\..\source\repos\NFNumericTextBox\NFNumericTextBox\bin\Debug\NFNumericTextBox.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -82,6 +79,16 @@
       <DependentUpon>VariantEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\source\repos\NFNumericTextBox\NFNumericTextBox\NFNumericTextBox.csproj">
+      <Project>{8e1a3011-e6ae-480f-a8b4-b291623389b9}</Project>
+      <Name>NFNumericTextBox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\source\repos\NFVectorComboBox\NFVectorComboBox\NFVectorComboBox.csproj">
+      <Project>{ebe3645c-9fa3-40ce-8f19-7e27cd2bf6e2}</Project>
+      <Name>NFVectorComboBox</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
