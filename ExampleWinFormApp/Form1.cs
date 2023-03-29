@@ -27,7 +27,7 @@ namespace ExampleWinFormApp
         private void Form1_Load(object sender, EventArgs e)
         {
             isFileThere = false;
-            panel2.Controls.Add(vc);
+            panel1.Controls.Add(vc);
             FormClosing += Form1_FormClosing;
             OpenExtension();
         }
@@ -46,7 +46,6 @@ namespace ExampleWinFormApp
                 //File.Copy(sourceFile, tempFile, true);
                 if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    //vc.LoadData(file);
                     if (toolStripStatusLabel2.Text == "")
                     {
                         toolStripStatusLabel2.Text += Path.GetFullPath(arg);
@@ -58,6 +57,8 @@ namespace ExampleWinFormApp
                 }
             }
         }
+
+       
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -126,6 +127,7 @@ namespace ExampleWinFormApp
                     }
                     isFileThere = true;
                     label2.Text = "";
+                   
                     vc.LoadData(sourceFile);
                     //vc.path = tempFile;
                     //Console.WriteLine(GetFileHash(file));
@@ -168,8 +170,6 @@ namespace ExampleWinFormApp
                         toolStripStatusLabel2.Text += Path.GetFullPath(path);
                     }
                     label2.Text = "";
-                    //string tempDir = Path.Combine(Path.GetTempPath(), "VariantEditor");
-                    //Directory.CreateDirectory(tempDir);
                     vc.LoadData(path);
                     isFileThere = true;
                 }
@@ -219,7 +219,7 @@ namespace ExampleWinFormApp
                     else if(dialogResult == DialogResult.Cancel)
                     {
                         e.Cancel = true;
-                        DeleteTempFile(tempFile);
+                        //DeleteTempFile(tempFile);
                     }
                 }
             }
@@ -259,9 +259,6 @@ namespace ExampleWinFormApp
             Save();
         }
 
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
+       
     }
 }

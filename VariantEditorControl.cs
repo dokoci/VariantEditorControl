@@ -82,10 +82,13 @@ namespace VariantEditorControl
         private NFParameterSetReaderPointer reader = NFParameterSetReader.New();
         private NFParameterSetWriterPointer writer = NFParameterSetWriter.New();
 
-       public  string hexStringOriginal = null;
-       public  string hexStringEditet = null;
+        public string hexStringOriginal = null;
+        public string hexStringEditet = null;
 
         private BindingSource bindingSource = new BindingSource();
+
+        private static bool success = false;
+
         public void LoadData(string path)
         {
             mainTable.Controls.Clear();
@@ -94,7 +97,7 @@ namespace VariantEditorControl
             string tempStr = path;
             //reader.setSource("C:\\Users\\koci\\Desktop\\NFMsurfControl.npsx");
             reader.setSource(tempStr);
-            bool success = reader.read();
+            success = reader.read();
             //System.Drawing.Size size = new System.Drawing.Size(150, 20);
             if (success)
             {
@@ -152,7 +155,6 @@ namespace VariantEditorControl
                 };
 
                 VectorComboBox nfCombo = new VectorComboBox();
-
                 cb.SelectedIndexChanged += (s, e) =>
                     {
                         mainTable.Controls.Remove(StringValueText);
@@ -177,8 +179,8 @@ namespace VariantEditorControl
                         string str = (string)(s as ComboBox).SelectedValue;
                         NFVariant val = parameterSet.getParameter(str);
 
-                            switch (parameterSet.getParameter(str).getType())
-                            {
+                        switch (parameterSet.getParameter(str).getType())
+                        {
                             case NFVariant.DataType.INT_TYPE:
                                 assign = "asInteger";
                                 NumVal.Enabled = true;
@@ -196,10 +198,10 @@ namespace VariantEditorControl
                                 uint count = val.getNumberOfElements();
                                 long[] intList = new long[count];
                                 val.getIntVector(intList, count);
-                              
+
                                 bindingSource.DataSource = new VariantBindingProperties(val).asIntList;
                                 nfCombo.bindingSource.DataSource = bindingSource;
-                                
+
                                 break;
 
                             case NFVariant.DataType.DOUBLE_VECTOR_TYPE:
@@ -220,21 +222,21 @@ namespace VariantEditorControl
                                 mainTable.Controls.Add(numericTextBox, 6, 6);
                                 numericTextBox.DataBindings.Add("Text", new VariantBindingProperties(val), assign, true, DataSourceUpdateMode.OnPropertyChanged);
                                 break;
-                                
+
                             case NFVariant.DataType.STRING_TYPE:
                                 assign = "asString";
                                 StringValueText.Text = val.valueToString();
                                 mainTable.Controls.Add(StringValueText, 6, 6);
-                               
+
                                 StringValueText.DataBindings.Add("Text", new VariantBindingProperties(val), assign, true, DataSourceUpdateMode.OnPropertyChanged);
                                 break;
 
                             case NFVariant.DataType.BOOL_TYPE:
                                 break;
 
-                                default:
-                                    break;
-                            }
+                            default:
+                                break;
+                        }
 
                         type.Text = TypeToString[val.getType()];
                         unit.Text = UnitToString[val.getUnitType()];
@@ -242,9 +244,9 @@ namespace VariantEditorControl
                         Exponent.Text = val.getUnitExponent().ToString();
                     };
 
-                mainTable.Controls.Add(type,1,6);
-                mainTable.Controls.Add(unit,3,6);
-                mainTable.Controls.Add(Multiplicator,4, 6);
+                mainTable.Controls.Add(type, 1, 6);
+                mainTable.Controls.Add(unit, 3, 6);
+                mainTable.Controls.Add(Multiplicator, 4, 6);
                 mainTable.Controls.Add(Exponent, 5, 6);
             }
             return;
@@ -254,14 +256,16 @@ namespace VariantEditorControl
         {
             if (location != null)
             {
-                string dest = location;
+                string destination = location;
                 //writer.setDestination("C:\\Users\\koci\\Desktop\\NFMsurfControl_Edited.npsx");
-                writer.setDestination(dest);
+                writer.setDestination(destination);
                 //hexStringEditet = parameterSet.toProtoBufHexString();
                 writer.setParameterSet(parameterSet);
                 writer.write();
             }
         }
+
+       
         public VariantEditorControl()
         {
             mNumberOfRows = 1;
@@ -402,7 +406,7 @@ namespace VariantEditorControl
                         };
 
                         mainTable.Controls.Add(lIntegerUnit, 2, rowIndex);
-                        
+
                         ++rowIndex;
 
 
@@ -591,7 +595,7 @@ namespace VariantEditorControl
                 Font = new Font("Arial", 12, FontStyle.Bold),
                 ForeColor = Color.Black
             };
-            
+
             Label LValue = new Label()
             {
                 Size = size,
@@ -599,13 +603,13 @@ namespace VariantEditorControl
                 Font = new Font("Arial", 12, FontStyle.Bold),
                 ForeColor = Color.Black
             };
-           
+
             mainTable.Controls.Add(LValue, 6, 5);
             mainTable.Controls.Add(LUnitExponent, 5, 5);
             mainTable.Controls.Add(LUnitMultiplicator, 4, 5);
             mainTable.Controls.Add(LUnit, 3, 5);
             mainTable.Controls.Add(LType, 1, 5);
-           
+
             mainTable.RowStyles[rowIndex].SizeType = SizeType.AutoSize;
             return;
         }

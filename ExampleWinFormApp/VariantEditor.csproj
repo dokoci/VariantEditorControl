@@ -78,6 +78,10 @@
     <Reference Include="NFEval_CS_SDK">
       <HintPath>..\..\..\..\..\..\..\NFEvalSDK\bin\NFEval_CS_SDK.dll</HintPath>
     </Reference>
+    <Reference Include="NFNumericTextBox, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\source\repos\NFNumericTextBox\NFNumericTextBox\bin\Debug\NFNumericTextBox.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -127,6 +131,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\source\repos\NFVectorComboBox\NFVectorComboBox\NFVectorComboBox.csproj">
+      <Project>{EBE3645C-9FA3-40CE-8F19-7E27CD2BF6E2}</Project>
+      <Name>NFVectorComboBox</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VariantEditorControl.csproj">
       <Project>{fe334c5b-a7e1-4bbf-8f34-81f13c7545fe}</Project>
       <Name>VariantEditorControl</Name>
