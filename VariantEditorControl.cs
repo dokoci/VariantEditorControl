@@ -105,7 +105,7 @@ namespace VariantEditorControl
                 hexStringOriginal = parameterSet.toProtoBufHexString();
                 ComboBox cb = new ComboBox()
                 {
-                    Size = new Size(170, 50),
+                    Size = new Size(170, 20),
                     DropDownStyle = ComboBoxStyle.DropDownList
                 };
                 List<string> ls = new List<string>(parameterSet.getParameterNames());
@@ -116,52 +116,58 @@ namespace VariantEditorControl
 
                 Label type = new Label()
                 {
-                    Font = new Font("Arial", 10)
+                    Font = new Font("Arial", 10),
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Dock = DockStyle.Top
                 };
                 Label unit = new Label()
                 {
-                    Font = new Font("Arial", 10)
+                    Font = new Font("Arial", 10),
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Dock = DockStyle.Top
                 };
                 Label Multiplicator = new Label()
                 {
-                    Font = new Font("Arial", 10)
+                    Font = new Font("Arial", 10),
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Dock = DockStyle.Top
                 };
                 Label Exponent = new Label()
                 {
-                    Font = new Font("Arial", 10)
+                    Font = new Font("Arial", 10),
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Dock = DockStyle.Top
                 };
                 TextBox StringValueText = new TextBox()
                 {
-                    Size = new Size(200, 30),
+                    Size = new Size(170, 20),
                     Font = new Font("Arial", 10)
                 };
                 NumericUpDown NumVal = new NumericUpDown()
                 {
+                    Size = new Size(170, 20),
                     Enabled = false
-                };
-                ComboBox cbVectorInt = new ComboBox
-                {
-                    Size = new Size(150, 20)
-                };
-                ComboBox cbVectorDouble = new ComboBox
-                {
-                    Size = new Size(150, 20)
                 };
 
                 NumericTextBox numericTextBox = new NumericTextBox()
                 {
-                    Size = new Size(200, 30),
+                    Size = new Size(170, 20),
                     Font = new Font("Arial", 10)
                 };
 
-                VectorComboBox nfCombo = new VectorComboBox();
+                VectorComboBox nfCombo = new VectorComboBox()
+                {
+                    Size = new Size(170, 20),
+                };
                 cb.SelectedIndexChanged += (s, e) =>
                     {
                         mainTable.Controls.Remove(StringValueText);
                         mainTable.Controls.Remove(numericTextBox);
                         mainTable.Controls.Remove(NumVal);
-                        mainTable.Controls.Remove(cbVectorInt);
-                        mainTable.Controls.Remove(cbVectorDouble);
                         mainTable.Controls.Remove(nfCombo);
                         NumVal.Refresh();
                         numericTextBox.Refresh();
@@ -187,13 +193,13 @@ namespace VariantEditorControl
                                 NumVal.Maximum = int.MaxValue;
                                 NumVal.Minimum = int.MinValue;
                                 NumVal.DataBindings.Add("Value", new VariantBindingProperties(val), assign);
-                                mainTable.Controls.Add(NumVal, 6, 6);
+                                mainTable.Controls.Add(NumVal, 1, 6);
                                 break;
 
                             case NFVariant.DataType.INT_VECTOR_TYPE:
                                 bindingSource.Clear();
                                 nfCombo.MyProperty = val;
-                                mainTable.Controls.Add(nfCombo, 6, 6);
+                                mainTable.Controls.Add(nfCombo, 1, 6);
 
                                 uint count = val.getNumberOfElements();
                                 long[] intList = new long[count];
@@ -207,7 +213,7 @@ namespace VariantEditorControl
                             case NFVariant.DataType.DOUBLE_VECTOR_TYPE:
                                 bindingSource.Clear();
                                 nfCombo.MyProperty = val;
-                                mainTable.Controls.Add(nfCombo, 6, 6);
+                                mainTable.Controls.Add(nfCombo, 1, 6);
 
                                 uint doubleCount = val.getNumberOfElements();
                                 double[] doubleList = new double[doubleCount];
@@ -216,17 +222,21 @@ namespace VariantEditorControl
                                 bindingSource.DataSource = new VariantBindingProperties(val).asDoubleList;
                                 nfCombo.bindingSource.DataSource = bindingSource;
                                 break;
-
+                            case NFVariant.DataType.DOUBLE_TYPE:
+                                assign = "asFloat";
+                                mainTable.Controls.Add(numericTextBox, 1, 6);
+                                numericTextBox.DataBindings.Add("Text", new VariantBindingProperties(val), assign, true, DataSourceUpdateMode.OnPropertyChanged);
+                                break;
                             case NFVariant.DataType.FLOAT_TYPE:
                                 assign = "asFloat";
-                                mainTable.Controls.Add(numericTextBox, 6, 6);
+                                mainTable.Controls.Add(numericTextBox, 1, 6);
                                 numericTextBox.DataBindings.Add("Text", new VariantBindingProperties(val), assign, true, DataSourceUpdateMode.OnPropertyChanged);
                                 break;
 
                             case NFVariant.DataType.STRING_TYPE:
                                 assign = "asString";
                                 StringValueText.Text = val.valueToString();
-                                mainTable.Controls.Add(StringValueText, 6, 6);
+                                mainTable.Controls.Add(StringValueText, 1, 6);
 
                                 StringValueText.DataBindings.Add("Text", new VariantBindingProperties(val), assign, true, DataSourceUpdateMode.OnPropertyChanged);
                                 break;
@@ -244,10 +254,10 @@ namespace VariantEditorControl
                         Exponent.Text = val.getUnitExponent().ToString();
                     };
 
-                mainTable.Controls.Add(type, 1, 6);
-                mainTable.Controls.Add(unit, 3, 6);
-                mainTable.Controls.Add(Multiplicator, 4, 6);
-                mainTable.Controls.Add(Exponent, 5, 6);
+                mainTable.Controls.Add(type, 3, 6);
+                mainTable.Controls.Add(unit, 4, 6);
+                mainTable.Controls.Add(Multiplicator, 5, 6);
+                mainTable.Controls.Add(Exponent, 6, 6);
             }
             return;
         }
@@ -265,7 +275,7 @@ namespace VariantEditorControl
             }
         }
 
-       
+
         public VariantEditorControl()
         {
             mNumberOfRows = 1;
@@ -565,50 +575,60 @@ namespace VariantEditorControl
 
         private void CreateTableHeader()
         {
-            Size size = new Size(110, 30);
+            Size size = new Size(120, 30);
             const int rowIndex = 0;
             Label LType = new Label()
             {
                 Size = size,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Text = "Type",
-                Font = new Font("Arial", 12, FontStyle.Bold),
+                Font = new Font("Arial", 12, FontStyle.Bold |FontStyle.Underline),
                 ForeColor = Color.Black
             };
             Label LUnit = new Label()
             {
                 Size = size,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Text = "Unit",
-                Font = new Font("Arial", 12, FontStyle.Bold),
+                Font = new Font("Arial", 12, FontStyle.Bold | FontStyle.Underline),
                 ForeColor = Color.Black
             };
             Label LUnitMultiplicator = new Label()
             {
                 Size = size,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Text = "Multiplicator",
-                Font = new Font("Arial", 12, FontStyle.Bold),
+                Font = new Font("Arial", 12, FontStyle.Bold | FontStyle.Underline),
                 ForeColor = Color.Black
             };
             Label LUnitExponent = new Label()
             {
                 Size = size,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Text = "Exponent",
-                Font = new Font("Arial", 12, FontStyle.Bold),
+                Font = new Font("Arial", 12, FontStyle.Bold | FontStyle.Underline),
                 ForeColor = Color.Black
             };
 
             Label LValue = new Label()
             {
                 Size = size,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Text = "Value",
-                Font = new Font("Arial", 12, FontStyle.Bold),
+                Font = new Font("Arial", 12, FontStyle.Bold | FontStyle.Underline),
                 ForeColor = Color.Black
             };
 
-            mainTable.Controls.Add(LValue, 6, 5);
-            mainTable.Controls.Add(LUnitExponent, 5, 5);
-            mainTable.Controls.Add(LUnitMultiplicator, 4, 5);
-            mainTable.Controls.Add(LUnit, 3, 5);
-            mainTable.Controls.Add(LType, 1, 5);
+            mainTable.Controls.Add(LUnitExponent, 6, 5);
+            mainTable.Controls.Add(LUnitMultiplicator, 5, 5);
+            mainTable.Controls.Add(LUnit, 4, 5);
+            mainTable.Controls.Add(LType, 3, 5);
+            mainTable.Controls.Add(LValue, 1, 5);
 
             mainTable.RowStyles[rowIndex].SizeType = SizeType.AutoSize;
             return;

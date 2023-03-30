@@ -32,48 +32,54 @@ namespace ExampleWinFormApp
             OpenExtension();
         }
 
+        private bool IsFileInUse(string file)
+        {
+            FileStream s = null;
+            try
+            {
+                s = new FileStream(file, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("File is in use!");
+                return true;
+            }
+            using (s)
+            {
+                return false;
+            }
+        }
         private void OpenExtension()
         {
             string[] args = Environment.GetCommandLineArgs();
             foreach (string arg in args)
             {
-                string ext = Path.GetExtension(arg);
-                fileName = Path.GetFileName(arg);
-                sourcePath = Path.GetDirectoryName(arg);
-                sourceFile = Path.Combine(sourcePath, fileName);
-                tempFile = Path.Combine(tempPath, fileName);
-                DeleteTempFile(tempFile);
-                //File.Copy(sourceFile, tempFile, true);
-                if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    if (toolStripStatusLabel2.Text == "")
-                    {
-                        toolStripStatusLabel2.Text += Path.GetFullPath(arg);
-                    }
-                    isFileThere = true;
-                    label2.Text = "";
-                    vc.LoadData(sourceFile);
-                    return;
-                }
+                   
+                        string ext = Path.GetExtension(arg);
+                        fileName = Path.GetFileName(arg);
+                        sourcePath = Path.GetDirectoryName(arg);
+                        sourceFile = Path.Combine(sourcePath, fileName);
+                        tempFile = Path.Combine(tempPath, fileName);
+                        DeleteTempFile(tempFile);
+                        //File.Copy(sourceFile, tempFile, true);
+                        if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            if (toolStripStatusLabel2.Text == "")
+                            {
+                                toolStripStatusLabel2.Text += Path.GetFullPath(arg);
+                            }
+                            label2.Text = "";
+                            vc.LoadData(sourceFile);
+                            isFileThere = true;
+                            return;
+                        }
             }
         }
 
        
-        private void Form1_DragEnter(object sender, DragEventArgs e)
+        private void panel1_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
-        }
-
-        private void panel2_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (!isFileThere && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -98,50 +104,52 @@ namespace ExampleWinFormApp
                 }
             }
         }
-        private void Form1_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] filePath = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-        }
+        
 
-        private void panel2_DragDrop(object sender, DragEventArgs e)
+        private void panel1_DragDrop(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            string[] files1 = files;
-            foreach (var file in files1)
-            {
-                string ext = Path.GetExtension(file);
-                fileName = Path.GetFileName(file);
-                sourcePath = Path.GetDirectoryName(file);
-                sourceFile = Path.Combine(sourcePath, fileName);
-                tempFile = Path.Combine(tempPath, fileName);
-                DeleteTempFile(tempFile);
-                //File.Copy(sourceFile, tempFile, true);
-                if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
+
+                foreach (var file in files)
                 {
-                    e.Effect = DragDropEffects.Copy;
-                    //vc.LoadData(file);
-                    if (toolStripStatusLabel2.Text == "")
+                    string ext = Path.GetExtension(file);
+                    fileName = Path.GetFileName(file);
+                    sourcePath = Path.GetDirectoryName(file);
+                    sourceFile = Path.Combine(sourcePath, fileName);
+                    tempFile = Path.Combine(tempPath, fileName);
+                    DeleteTempFile(tempFile);
+                    //File.Copy(sourceFile, tempFile, true);
+                    if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        toolStripStatusLabel2.Text += Path.GetFullPath(file);
+                        //e.Effect = DragDropEffects.Copy;
+                        //vc.LoadData(file);
+                        if (toolStripStatusLabel2.Text == "")
+                        {
+                            toolStripStatusLabel2.Text += Path.GetFullPath(file);
+                        }
+                        isFileThere = true;
+                        label2.Text = "";
+
+                        vc.LoadData(sourceFile);
+
+                        //vc.path = tempFile;
+                        //Console.WriteLine(GetFileHash(file));
+                        //textBox1.Text = GetFileHash(file);
+                        //textBox2.Text = GetFileHash(tempFile);
+                        return;
                     }
-                    isFileThere = true;
-                    label2.Text = "";
-                   
-                    vc.LoadData(sourceFile);
-                    //vc.path = tempFile;
-                    //Console.WriteLine(GetFileHash(file));
-                    //textBox1.Text = GetFileHash(file);
-                    //textBox2.Text = GetFileHash(tempFile);
-                    return;
+                    else
+                    {
+                        MessageBox.Show("Wrong file !", "VariantEditor");
+                    }
                 }
-            }
         }
 
         private string GetFileHash(string fInfo)
         {
             HashAlgorithm hashAlgo = HashAlgorithm.Create();
-            using (var stream = new FileStream(fInfo, FileMode.Open, FileAccess.Read))
+            using (FileStream stream = new FileStream(fInfo, FileMode.Open, FileAccess.Read))
             {
                 var hash = hashAlgo.ComputeHash(stream);
                 hashAlgo.Dispose();
@@ -180,7 +188,7 @@ namespace ExampleWinFormApp
         {
             if (isFileThere == true)
             {
-                
+
                 if (UnsavedChanges() == true)
                 {
 
@@ -190,7 +198,7 @@ namespace ExampleWinFormApp
                         Save();
                         Application.Exit();
                     }
-                    else 
+                    else
                     {
                         ((FormClosingEventArgs)e).Cancel = true;
                     }
@@ -216,7 +224,7 @@ namespace ExampleWinFormApp
                     {
                         Save();
                     }
-                    else if(dialogResult == DialogResult.Cancel)
+                    else if (dialogResult == DialogResult.Cancel)
                     {
                         e.Cancel = true;
                         //DeleteTempFile(tempFile);
@@ -248,7 +256,7 @@ namespace ExampleWinFormApp
 
             //if (UnsavedChanges() == true)
             //{
-                vc.SaveData(sourceFile);
+            vc.SaveData(sourceFile);
             //}
 
             //textBox1.Text = originalHash;
@@ -259,6 +267,27 @@ namespace ExampleWinFormApp
             Save();
         }
 
-       
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (vc is IDisposable)
+            {
+                ((IDisposable)vc).Dispose();
+                if (vc.IsDisposed == true)
+                {
+                    fileName = null;
+                    sourcePath = null;
+                    sourceFile = null;
+                    tempFile = null;
+
+                    isFileThere = false;
+                    panel1.Controls.Add(vc);
+                    //FormClosing += Form1_FormClosing;
+                    OpenExtension();
+                }
+            }
+           
+        }
+
+      
     }
 }
