@@ -51,6 +51,7 @@ namespace ExampleWinFormApp
         }
         private void OpenExtension()
         {
+            label2.Text = "Drop the file here.";
             string[] args = Environment.GetCommandLineArgs();
             foreach (string arg in args)
             {
@@ -68,9 +69,9 @@ namespace ExampleWinFormApp
                             {
                                 toolStripStatusLabel2.Text += Path.GetFullPath(arg);
                             }
-                            label2.Text = "";
                             vc.LoadData(sourceFile);
                             isFileThere = true;
+                            label2.Text = "";
                             return;
                         }
             }
@@ -105,7 +106,6 @@ namespace ExampleWinFormApp
             }
         }
         
-
         private void panel1_DragDrop(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
@@ -119,7 +119,7 @@ namespace ExampleWinFormApp
                     sourceFile = Path.Combine(sourcePath, fileName);
                     tempFile = Path.Combine(tempPath, fileName);
                     DeleteTempFile(tempFile);
-                    //File.Copy(sourceFile, tempFile, true);
+                    File.Copy(sourceFile, tempFile, true);
                     if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
                     {
                         //e.Effect = DragDropEffects.Copy;
@@ -133,11 +133,11 @@ namespace ExampleWinFormApp
 
                         vc.LoadData(sourceFile);
 
-                        //vc.path = tempFile;
-                        //Console.WriteLine(GetFileHash(file));
-                        //textBox1.Text = GetFileHash(file);
-                        //textBox2.Text = GetFileHash(tempFile);
-                        return;
+                    //vc.path = tempFile;
+                    //Console.WriteLine(GetFileHash(file));
+                    textBox1.Text = GetFileHash(file);
+                    textBox2.Text = GetFileHash(tempFile);
+                    return;
                     }
                     else
                     {
@@ -282,7 +282,7 @@ namespace ExampleWinFormApp
                     isFileThere = false;
                     panel1.Controls.Add(vc);
                     //FormClosing += Form1_FormClosing;
-                    OpenExtension();
+                    //OpenExtension();
                 }
             }
            
