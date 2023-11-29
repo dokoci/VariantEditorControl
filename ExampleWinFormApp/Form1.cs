@@ -21,11 +21,12 @@ namespace ExampleWinFormApp
         public Form1()
         {
             InitializeComponent();
-            Directory.CreateDirectory(tempPath);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            button1.Enabled = false;
+            Directory.CreateDirectory(tempPath);
             isFileThere = false;
             panel1.Controls.Add(vc);
             FormClosing += Form1_FormClosing;
@@ -51,33 +52,33 @@ namespace ExampleWinFormApp
         }
         private void OpenExtension()
         {
-            label2.Text = "Drop the file here.";
+            label2.Text = "Drop your file here.";
             string[] args = Environment.GetCommandLineArgs();
             foreach (string arg in args)
             {
-                   
-                        string ext = Path.GetExtension(arg);
-                        fileName = Path.GetFileName(arg);
-                        sourcePath = Path.GetDirectoryName(arg);
-                        sourceFile = Path.Combine(sourcePath, fileName);
-                        tempFile = Path.Combine(tempPath, fileName);
-                        DeleteTempFile(tempFile);
-                        //File.Copy(sourceFile, tempFile, true);
-                        if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            if (toolStripStatusLabel2.Text == "")
-                            {
-                                toolStripStatusLabel2.Text += Path.GetFullPath(arg);
-                            }
-                            vc.LoadData(sourceFile);
-                            isFileThere = true;
-                            label2.Text = "";
-                            return;
-                        }
+
+                string ext = Path.GetExtension(arg);
+                fileName = Path.GetFileName(arg);
+                sourcePath = Path.GetDirectoryName(arg);
+                sourceFile = Path.Combine(sourcePath, fileName);
+                tempFile = Path.Combine(tempPath, fileName);
+                DeleteTempFile(tempFile);
+                //File.Copy(sourceFile, tempFile, true);
+                if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    if (toolStripStatusLabel2.Text == "")
+                    {
+                        toolStripStatusLabel2.Text += Path.GetFullPath(arg);
+                    }
+                    vc.LoadData(sourceFile);
+                    isFileThere = true;
+                    label2.Text = "";
+                    return;
+                }
             }
         }
 
-       
+
         private void panel1_DragEnter(object sender, DragEventArgs e)
         {
             if (!isFileThere && e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -105,45 +106,47 @@ namespace ExampleWinFormApp
                 }
             }
         }
-        
+
         private void panel1_DragDrop(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                foreach (var file in files)
+            foreach (var file in files)
+            {
+                string ext = Path.GetExtension(file);
+                fileName = Path.GetFileName(file);
+                sourcePath = Path.GetDirectoryName(file);
+                sourceFile = Path.Combine(sourcePath, fileName);
+                tempFile = Path.Combine(tempPath, fileName);
+                DeleteTempFile(tempFile);
+                File.Copy(sourceFile, tempFile, true);
+                if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    string ext = Path.GetExtension(file);
-                    fileName = Path.GetFileName(file);
-                    sourcePath = Path.GetDirectoryName(file);
-                    sourceFile = Path.Combine(sourcePath, fileName);
-                    tempFile = Path.Combine(tempPath, fileName);
-                    DeleteTempFile(tempFile);
-                    File.Copy(sourceFile, tempFile, true);
-                    if (ext.Equals(".npsx", StringComparison.CurrentCultureIgnoreCase))
+                    //e.Effect = DragDropEffects.Copy;
+                    //vc.LoadData(file);
+                    if (toolStripStatusLabel2.Text == "")
                     {
-                        //e.Effect = DragDropEffects.Copy;
-                        //vc.LoadData(file);
-                        if (toolStripStatusLabel2.Text == "")
-                        {
-                            toolStripStatusLabel2.Text += Path.GetFullPath(file);
-                        }
-                        isFileThere = true;
-                        label2.Text = "";
+                        toolStripStatusLabel2.Text += Path.GetFullPath(file);
+                    }
+                    isFileThere = true;
+                    button1.Enabled = true;
+                    label2.Text = "";
 
-                        vc.LoadData(sourceFile);
+                    vc.LoadData(sourceFile);
 
                     //vc.path = tempFile;
                     //Console.WriteLine(GetFileHash(file));
                     textBox1.Text = GetFileHash(file);
                     textBox2.Text = GetFileHash(tempFile);
+
                     return;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Wrong file !", "VariantEditor");
-                    }
                 }
+                else
+                {
+                    MessageBox.Show("Wrong file !", "VariantEditor");
+                }
+            }
         }
 
         private string GetFileHash(string fInfo)
@@ -180,6 +183,7 @@ namespace ExampleWinFormApp
                     label2.Text = "";
                     vc.LoadData(path);
                     isFileThere = true;
+                    button1.Enabled = true;
                 }
             }
         }
@@ -264,7 +268,11 @@ namespace ExampleWinFormApp
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            Save();
+            if (isFileThere)
+            {
+
+                Save();
+            }
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -281,13 +289,14 @@ namespace ExampleWinFormApp
 
                     isFileThere = false;
                     panel1.Controls.Add(vc);
+                    button1.Enabled = false;
                     //FormClosing += Form1_FormClosing;
                     //OpenExtension();
                 }
             }
-           
+
         }
 
-      
+
     }
 }
