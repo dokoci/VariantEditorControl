@@ -302,7 +302,7 @@ namespace VariantEditorControl
             if ((s as Control).Height <= totalHeight)
             {
                 AutoScroll = true;
-                AutoScrollMinSize = new System.Drawing.Size(0, totalHeight);
+                AutoScrollMinSize = new Size(0, totalHeight);
             }
             else
             {

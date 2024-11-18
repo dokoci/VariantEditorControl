@@ -75,8 +75,9 @@
     <ApplicationIcon>rodentia-icons_preferences-system.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NFEval_CS_SDK">
-      <HintPath>..\..\..\..\..\..\..\NFEvalSDK\bin\NFEval_CS_SDK.dll</HintPath>
+    <Reference Include="NFEval_CS_SDK, Version=8.5.0.33284, Culture=neutral, PublicKeyToken=d3133b3d77c78299, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Nanofocus\evaluation\NFEval_CS_SDK.dll</HintPath>
     </Reference>
     <Reference Include="NFNumericTextBox, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

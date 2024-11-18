@@ -30,7 +30,6 @@ namespace DataTypes
     {
         public string path;
         public string filename;
-
     }
 
     class VariantBindingProperties
@@ -98,6 +97,7 @@ namespace DataTypes
                 return list;
             }
         }
+
         public List<long> asIntList
         {
             set
@@ -124,6 +124,7 @@ namespace DataTypes
                 return new List<long>(intList);
             }
         }
+
         public List<double> asDoubleList
         {
             set
@@ -139,9 +140,7 @@ namespace DataTypes
                     i++;
                 }
 
-
                 data.setDoubleVector(doubleList, (uint)value.Count);
-
             }
             get
             {
